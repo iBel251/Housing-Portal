@@ -10,7 +10,7 @@ import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
+import HouseIcon from "@mui/icons-material/House";
 import { Link } from "react-router-dom";
 
 const pages = ["Houses", "Requests", "Messages", "Help", "Signup"];
@@ -37,9 +37,16 @@ function ResponsiveAppBar() {
 
   return (
     <AppBar position="static">
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" sx={{ backgroundColor: "#2D6072" }}>
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+          <HouseIcon
+            sx={{
+              display: { xs: "none", md: "flex" },
+              mr: 1,
+              color: "orange",
+              fontSize: "50px",
+            }}
+          />
           <Typography
             variant="h6"
             noWrap
@@ -50,12 +57,22 @@ function ResponsiveAppBar() {
               display: { xs: "none", md: "flex" },
               fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
+              letterSpacing: ".1rem",
+              color: "orange",
               textDecoration: "none",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            LOGO
+            <span
+              style={{
+                fontSize: "50px",
+                fontWeight: "bold",
+              }}
+            >
+              የኛ
+            </span>
+            <span style={{ textDecoration: "underline" }}>HOUSING</span>
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -99,7 +116,13 @@ function ResponsiveAppBar() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+          <HouseIcon
+            sx={{
+              display: { xs: "flex", md: "none" },
+              color: "orange",
+              fontSize: "40px",
+            }}
+          />
           <Typography
             variant="h5"
             noWrap
@@ -112,11 +135,21 @@ function ResponsiveAppBar() {
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "inherit",
+              color: "orange",
               textDecoration: "none",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            LOGO
+            <span
+              style={{
+                fontSize: "30px",
+                fontWeight: "bold",
+              }}
+            >
+              የኛ
+            </span>
+            HOUSING
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
