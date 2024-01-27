@@ -9,3 +9,4 @@ services:
       - type: rewrite
         source: /.*/ # This matches all paths
         destination: /index.html # This rewrites to index.html
+
