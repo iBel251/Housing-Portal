@@ -1,0 +1,30 @@
+.menu-link.active::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -10%;
+    width: 120%;
+    height: 150%;
+    color: black;
+    background-color: orange;
+    border-radius: 15px 0 15px 0;
+    z-index: -1
+}
+.menu-link.active::after {
+    content: "";
+    position: absolute;
+    top: -20%;
+    left: -10%;
+    width: 120%;
+    height: 3px;
+    color: black;
+    background-color: #2D6072;
+    border-radius: 15px 0 15px 0;
+    
+}
+
+.menu-link {
+    z-index: 1;
+    color: inherit;
+    text-decoration: none;
+}

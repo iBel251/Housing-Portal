@@ -1,0 +1,57 @@
+/* carousel.css */
+.carousel .thumb img {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.carousel .slide img {
+    height: 500px;  /* change this to whatever you want */
+    width: 100%;
+    filter: brightness(70%);
+    object-fit: cover;
+}
+
+.welcome-section-container {
+    position: absolute;
+    top:35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #2D6072;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    z-index: 1;
+    width: 70%;
+    text-align: center;
+}
+
+.header-text{
+    font-size: 5vw;
+}
+
+.detail-text {
+    color: orange;
+    font-size: 2vw; /* Responsive font size */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.header-span {
+    color: orange;
+}
+
+@media (max-width: 600px) { /* Adjust breakpoint for mobile view */
+
+    .welcome-section-container{
+        top:35%;
+        width: 100%;
+        padding: 20px 0;
+    }
+    .header-text{
+        font-size: 8vw;
+    }
+
+    .detail-text {
+        font-size: 4vw;
+        margin-bottom:90px;
+    }
+}
