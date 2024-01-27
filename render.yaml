@@ -1,0 +1,12 @@
+services:
+  - type: web
+    env: static
+    name: yegna-housing
+    staticPublishPath: ./build
+    buildCommand: npm run build
+    startCommand: serve -s build
+    routes:
+      - type: rewrite
+        source: /.*/ # This matches all paths
+        destination: /index.html # This rewrites to index.html
+
