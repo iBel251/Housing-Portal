@@ -12,7 +12,10 @@ const UserHouses = ({ userData, onHouseClick }) => {
 
   // Use the useMemo hook to recompute the filtered houses only if allHouses or userData.houseId changes
   const userHouses = useMemo(() => {
-    return allHouses.filter((house) => userData?.houseId.includes(house.id));
+    if (userData && userData.houseId) {
+      return allHouses.filter((house) => userData.houseId.includes(house.id));
+    }
+    return [];
   }, [allHouses, userData?.houseId]);
 
   // Use the useFetchAllHouses hook to get the fetchHousesAndUpdateStore function
