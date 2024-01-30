@@ -79,7 +79,7 @@ function Messages() {
                 </>
               ) : userMessages.length > 0 ? (
                 <List>
-                  {userMessages.map((message) => (
+                  {userMessages?.map((message) => (
                     <React.Fragment key={message.chatRoomId}>
                       <ListItem
                         alignItems="flex-start"

@@ -152,7 +152,7 @@ function MessageDetail() {
           <div style={styles.responseSection}>
             <Typography variant="h6">Conversation:</Typography>
             <List>
-              {messageData.messages.map((item, index) => (
+              {messageData?.messages.map((item, index) => (
                 <React.Fragment key={index}>
                   <ListItem
                     alignItems="flex-start"
