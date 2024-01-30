@@ -7,7 +7,7 @@ import { UserAuth } from "../../context/AuthContext";
 
 const UserHouses = ({ userData, onHouseClick }) => {
   const { user } = UserAuth();
-  const [houseData, setHouseData] = useState();
+  const [houseData, setHouseData] = useState({});
   const allHouses = useMainStore((state) => state.allHouses);
 
   // Use the useMemo hook to recompute the filtered houses only if allHouses or userData.houseId changes
