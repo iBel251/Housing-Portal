@@ -31,6 +31,10 @@ const styles = {
   longText: {
     whiteSpace: "pre-line", // Ensures proper rendering of newlines
   },
+  mapBtn: {
+    marginLeft: "15px",
+    fontSize: "10px",
+  },
 };
 
 const HouseDetails = () => {
@@ -52,6 +56,15 @@ const HouseDetails = () => {
       // You can navigate to the chat room or perform other actions here.
     }
   }, [chatRoomId]);
+
+  // Function to construct Google Maps URL
+  const getGoogleMapsUrl = (lat, lng) => {
+    return `https://www.google.com/maps/?q=${lat},${lng}`;
+  };
+
+  // Check if house has location data
+  const hasLocationData =
+    house.location && house.location.lat && house.location.lng;
 
   const goBack = () => {
     navigate(-1); // Implements back functionality
@@ -97,7 +110,7 @@ const HouseDetails = () => {
             Rooms: {house.rooms}
           </Typography>
           <Typography variant="body1" style={styles.detailItem}>
-            Area: {house.area} sqm
+            Area: {house.area}
           </Typography>
           <Typography variant="body2">
             Date : {formatTimestamp(house.timestamp)}
@@ -105,7 +118,7 @@ const HouseDetails = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <Typography variant="body1" style={styles.detailItem}>
-            Price: ${house.price}
+            Price: {house.price} Birr
           </Typography>
           <Typography variant="body1" style={styles.detailItem}>
             Bathrooms: {house.bathroom}
@@ -114,6 +127,25 @@ const HouseDetails = () => {
             Details: {house.detail}
           </Typography>
         </Grid>
+        {hasLocationData ? (
+          <Button
+            variant="contained"
+            color="secondary"
+            style={styles.mapBtn}
+            onClick={() =>
+              window.open(
+                getGoogleMapsUrl(house.location.lat, house.location.lng),
+                "_blank"
+              )
+            }
+          >
+            View location on Google Maps
+          </Button>
+        ) : (
+          <Typography style={{ color: "red", marginLeft: "15px" }}>
+            Location data not available.
+          </Typography>
+        )}
       </Grid>
 
       {/* Add a back button or more functionality as needed */}
