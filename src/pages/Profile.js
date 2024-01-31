@@ -120,7 +120,7 @@ const Profile = () => {
       case "preferences":
         return <Preferences userData={storedUserData} />;
       case "editProfile":
-        return <UserProfile />;
+        return <UserProfile userData={storedUserData} />;
       case "editHouse":
         return <EditHouse houseId={selectedHouseId} />;
       default:

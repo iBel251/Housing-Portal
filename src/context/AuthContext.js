@@ -4,7 +4,10 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-  AuthErrorCodes,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+  sendEmailVerification,
 } from "firebase/auth";
 import { auth, db } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
@@ -51,6 +54,8 @@ export const AuthContextProvider = ({ children }) => {
           pictureUrl,
           email
         );
+        // Send a verification email to the user
+        await sendEmailVerification(authUser);
       }
     } catch (error) {
       console.error("Error creating user:", error);
@@ -87,6 +92,50 @@ export const AuthContextProvider = ({ children }) => {
     useMainStore.getState().setUserData({});
     useMainStore.getState().setUserHouse({});
     return signOut(auth);
+  };
+
+  const sendVerificationEmail = async () => {
+    if (!user) {
+      throw new Error("No user is currently signed in");
+    }
+
+    try {
+      // Send a verification email to the user
+      await sendEmailVerification(user);
+      console.log("Verification email sent successfully");
+    } catch (error) {
+      console.error("Error sending verification email:", error);
+      throw error;
+    }
+  };
+
+  const editUserData = async (key, value) => {
+    try {
+      if (!user || !user.uid) {
+        throw new Error("User is not authenticated");
+      }
+
+      // Check if the key is valid
+      if (!key) {
+        throw new Error("Key is required for editing");
+      }
+
+      const userDocRef = doc(db, "users", user.uid);
+
+      // Update the specific field in the Firestore document
+      await updateDoc(userDocRef, {
+        [key]: value,
+      });
+
+      // Update the local state
+      setUserData({
+        ...userData,
+        [key]: value,
+      });
+    } catch (error) {
+      console.error(`Error updating user data for key ${key}:`, error);
+      throw error;
+    }
   };
 
   const getUserDataById = async (userId) => {
@@ -197,6 +246,27 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
+  const changePassword = async (oldPassword, newPassword) => {
+    if (!user) {
+      throw new Error("No user is currently signed in");
+    }
+
+    try {
+      // Create a credential using the user's email and old password
+      const credential = EmailAuthProvider.credential(user.email, oldPassword);
+
+      // Re-authenticate the user with this credential
+      await reauthenticateWithCredential(user, credential);
+
+      // If re-authentication is successful, update the password
+      await updatePassword(user, newPassword);
+      console.log("Password updated successfully");
+    } catch (error) {
+      console.error("Error updating password:", error);
+      throw error;
+    }
+  };
+
   const countUsers = async () => {
     try {
       const usersCollectionRef = collection(db, "users");
@@ -291,10 +361,13 @@ export const AuthContextProvider = ({ children }) => {
         logout,
         createUser,
         signIn,
+        sendVerificationEmail,
+        editUserData,
         getUserDataById,
         setUserPreferences,
         editUserPreference,
         deleteUserPreference,
+        changePassword,
         countUsers,
         searchUsers,
         addRestriction,

@@ -1,27 +1,8 @@
 import React, { useState } from "react";
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Checkbox,
-  FormGroup,
-  FormControlLabel,
-  Box,
-  Card,
-  CardContent,
-  CardMedia,
-  Typography,
-  IconButton,
-  Button,
-} from "@mui/material";
+import { Box } from "@mui/material";
 import { HashLoader } from "react-spinners";
-import CircularProgress from "@mui/material/CircularProgress";
-import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
-import HouseModal from "../components/HouseModal";
 import HousesSecondNav from "../components/HousesSecondNav";
 import { UserAuth } from "../context/AuthContext";
-import { HouseAuth } from "../context/HouseContext";
 import { useEffect } from "react";
 import useMainStore from "../components/store/mainStore";
 import Filter from "../components/Filter";
@@ -36,6 +17,11 @@ function Houses() {
   useEffect(() => {
     if (filteredHouses && filteredHouses.length === 0) {
       setFilteredHouses(allHouses);
+    }
+    if (user.emailVerified) {
+      console.log("email verified");
+    } else {
+      console.log("email not verified");
     }
   }, []);
 
