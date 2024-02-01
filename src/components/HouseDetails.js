@@ -7,6 +7,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import { HashLoader } from "react-spinners";
 import { formatTimestamp } from "./functions/houseFunctions";
 import { useStartMessage } from "./functions/chatFunctions";
+import RoommateDisplay from "./RoommateDisplay";
 
 const styles = {
   container: {
@@ -34,6 +35,10 @@ const styles = {
   mapBtn: {
     marginLeft: "15px",
     fontSize: "10px",
+  },
+  roommateContainer: {
+    width: "100%",
+    background: "yellow",
   },
 };
 
@@ -69,9 +74,9 @@ const HouseDetails = () => {
   const goBack = () => {
     navigate(-1); // Implements back functionality
   };
-  useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to the top of the window
-  }, []);
+  // useEffect(() => {
+  //   window.scrollTo(0, 0); // Scroll to the top of the window
+  // }, []);
 
   const handleImageNavigation = (direction) => {
     const imageKeys = ["pic1", "pic2", "pic3"];
@@ -127,28 +132,31 @@ const HouseDetails = () => {
             Details: {house.detail}
           </Typography>
         </Grid>
-        {hasLocationData ? (
-          <Button
-            variant="contained"
-            color="secondary"
-            style={styles.mapBtn}
-            onClick={() =>
-              window.open(
-                getGoogleMapsUrl(house.location.lat, house.location.lng),
-                "_blank"
-              )
-            }
-          >
-            View location on Google Maps
-          </Button>
-        ) : (
-          <Typography style={{ color: "red", marginLeft: "15px" }}>
-            Location data not available.
-          </Typography>
-        )}
       </Grid>
-
-      {/* Add a back button or more functionality as needed */}
+      <Box sx={styles.roommateContainer}>
+        {house.type === "roommate/shared" && (
+          <RoommateDisplay houseData={house} />
+        )}
+      </Box>
+      {hasLocationData ? (
+        <Button
+          variant="contained"
+          color="secondary"
+          style={styles.mapBtn}
+          onClick={() =>
+            window.open(
+              getGoogleMapsUrl(house.location.lat, house.location.lng),
+              "_blank"
+            )
+          }
+        >
+          View location on Google Maps
+        </Button>
+      ) : (
+        <Typography style={{ color: "red", marginLeft: "15px" }}>
+          Location data not available.
+        </Typography>
+      )}
       <Button
         variant="contained"
         color="primary"
