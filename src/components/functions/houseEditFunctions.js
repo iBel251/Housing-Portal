@@ -3,6 +3,7 @@ import { Grid, IconButton, Typography } from "@mui/material";
 import { formatTimestamp } from "../functions/houseFunctions";
 import EditIcon from "@mui/icons-material/Edit";
 import MapDisplay from "../profile/MapDisplay";
+import RoommateDetails from "../profile/RoommateDetails";
 
 const styles = {
   detailContainer: {
@@ -43,15 +44,26 @@ export const renderMapDisplay = (house) => {
   }
 };
 export const renderHouseDetails = (house, openModal) => {
-  let excludedKeys = ["pic1", "pic2", "pic3", "id", "userId", "location"];
+  let excludedKeys = [
+    "pic1",
+    "pic2",
+    "pic3",
+    "id",
+    "userId",
+    "location",
+    "roommateData",
+  ];
   if (house.type !== "roommate/shared") {
     excludedKeys = [...excludedKeys, "peopleNeeded"];
   }
   if (house.type === "roommate/shared" || house.type === "sale") {
     excludedKeys = [...excludedKeys, "bathroom"];
   }
+  if (house.type === "roommate/shared") {
+    excludedKeys = [...excludedKeys, "areaSize"];
+  }
 
-  return Object.keys(house)
+  const details = Object.keys(house)
     .filter((key) => !excludedKeys.includes(key))
     .map((key) => (
       <Grid container spacing={2} key={key} style={styles.detailContainer}>
@@ -73,6 +85,19 @@ export const renderHouseDetails = (house, openModal) => {
         </div>
       </Grid>
     ));
+
+  // Conditionally render RoommateDetails if house type is "roommate/shared"
+  const roommateDetailsComponent =
+    house.type === "roommate/shared" ? (
+      <RoommateDetails houseData={house} />
+    ) : null;
+
+  return (
+    <>
+      {details}
+      {roommateDetailsComponent}
+    </>
+  );
 };
 
 export const redirectToGoogleMaps = (house) => {
