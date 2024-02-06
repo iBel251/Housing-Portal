@@ -20,19 +20,33 @@ import { UserAuth } from "../context/AuthContext";
 import "../styles/customstyles.css";
 import { useEffect } from "react";
 import useMainStore from "./store/mainStore";
+import { useState } from "react";
 
 let pages = [];
 const settings = ["Profile", "Logout"];
 
 function ResponsiveAppBar() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(true);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const { user, logout } = UserAuth();
-  const unreadMessageCount = useMainStore((state) => state.unreadMessageCount);
-
+  // const unreadMessageCount = useMainStore((state) => state.unreadMessageCount);
+  const notifications = useMainStore((state) => state.notifications);
+  const activeChatRoomId = useMainStore((state) => state.activeChatRoomId);
+  const activePage = useMainStore((state) => state.activePage);
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const location = useLocation(); //Get the current route location
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Filter out notifications that have a status of "seen"
+    const unreadNotifications = notifications?.filter(
+      (notification) =>
+        notification.status === "unseen" &&
+        notification.chatRoomId !== activeChatRoomId
+    );
+    setUnreadMessageCount(unreadNotifications.length);
+  }, [notifications]);
 
   useEffect(() => {
     const checkLoginStatus = () => {
@@ -168,13 +182,11 @@ function ResponsiveAppBar() {
                   <Link
                     to={`/${page.toLowerCase()}`}
                     className={`menu-link ${
-                      location.pathname === `/${page.toLowerCase()}`
-                        ? "active"
-                        : ""
+                      activePage === page.toLowerCase() ? "active" : ""
                     }`}
                     style={{
                       ...styles[
-                        location.pathname === `/${page.toLowerCase()}`
+                        activePage === page.toLowerCase()
                           ? "activeStyles"
                           : "nonActiveStyles"
                       ],
@@ -256,13 +268,11 @@ function ResponsiveAppBar() {
                 <Link
                   to={`/${page.toLowerCase()}`}
                   className={`menu-link ${
-                    location.pathname === `/${page.toLowerCase()}`
-                      ? "active"
-                      : ""
+                    activePage === page.toLowerCase() ? "active" : ""
                   }`}
                   style={{
                     ...styles[
-                      location.pathname === `/${page.toLowerCase()}`
+                      activePage === page.toLowerCase()
                         ? "activeStyles"
                         : "nonActiveStyles"
                     ],

@@ -40,6 +40,10 @@ const styles = {
     width: "100%",
     background: "yellow",
   },
+  btnGroup: {
+    width: "100%",
+    marginLeft: "15px",
+  },
 };
 
 const HouseDetails = () => {
@@ -68,9 +72,12 @@ const HouseDetails = () => {
   };
 
   // Check if house has location data
-  const hasLocationData =
-    house.location && house.location.lat && house.location.lng;
-
+  let hasLocationData;
+  if (house.location?.lat && house.location?.lng) {
+    hasLocationData = true;
+  } else {
+    hasLocationData = false;
+  }
   const goBack = () => {
     navigate(-1); // Implements back functionality
   };
@@ -157,30 +164,32 @@ const HouseDetails = () => {
           Location data not available.
         </Typography>
       )}
-      <Button
-        variant="contained"
-        color="primary"
-        style={styles.backButton}
-        onClick={goBack}
-      >
-        Go Back
-      </Button>
+      <Box sx={styles.btnGroup}>
+        <Button
+          variant="contained"
+          color="primary"
+          style={styles.backButton}
+          onClick={goBack}
+        >
+          Go Back
+        </Button>
 
-      <Button
-        disabled={isLoading}
-        variant="outlined"
-        onClick={handleChatRequest}
-        style={styles.contactButton}
-      >
-        {isLoading ? (
-          <div>
-            <HashLoader color="black" size={20} />
-          </div>
-        ) : (
-          "Contact"
-        )}
-        <EmailIcon sx={{ marginLeft: "5px", fontSize: "25px" }} />
-      </Button>
+        <Button
+          disabled={isLoading}
+          variant="outlined"
+          onClick={handleChatRequest}
+          style={styles.contactButton}
+        >
+          {isLoading ? (
+            <div>
+              <HashLoader color="black" size={20} />
+            </div>
+          ) : (
+            "Contact"
+          )}
+          <EmailIcon sx={{ marginLeft: "5px", fontSize: "25px" }} />
+        </Button>
+      </Box>
     </Paper>
   );
 };

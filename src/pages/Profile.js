@@ -83,10 +83,15 @@ const Profile = () => {
   const storedUserHouse = useMainStore((state) => state.userHouse);
   const [selectedHouseId, setSelectedHouseId] = useState();
   const { activeLink, setActiveLink } = useMainStore();
+  const setActivePage = useMainStore((state) => state.setActivePage);
 
+  useEffect(() => {
+    setActivePage("profile");
+    if (activeLink === "editHouse") {
+      setActiveLink("home");
+    }
+  }, []);
   const { user } = UserAuth();
-  const { registerHouse, editHouse, getHouseDetailsById, deleteHouse } =
-    HouseAuth();
 
   const handleSelect = (option) => {
     setActiveLink(option);
@@ -99,12 +104,6 @@ const Profile = () => {
     storedUserHouse &&
     Object.keys(storedUserHouse).some((key) => storedUserHouse[key] !== "")
   );
-
-  useEffect(() => {
-    if (activeLink === "editHouse") {
-      setActiveLink("home");
-    }
-  }, []);
 
   const renderContent = () => {
     switch (activeLink) {

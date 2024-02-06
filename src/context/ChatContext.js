@@ -110,56 +110,110 @@ export const ChatContextProvider = ({ children }) => {
 
   const addMessageToChat = async (chatId, body, sender, senderName) => {
     try {
-      // Reference to the chat document in Firestore
+      // Assuming you already have logic to add the message to the chat document
       const chatDocRef = doc(db, "chats", chatId);
-
-      // Get the chat document
       const chatDocSnapshot = await getDoc(chatDocRef);
 
-      if (chatDocSnapshot.exists()) {
-        // Chat document exists, update the messages array
-        const data = chatDocSnapshot.data();
-        const messages = data.messages || [];
-        const user1Id = data.user1Id;
-        const user2Id = data.user2Id;
-
-        // Initialize or update unreadCount based on message sender
-        if (!data.unreadCount) {
-          data.unreadCount = {};
-          data.unreadCount[user1Id] = 0;
-          data.unreadCount[user2Id] = 0;
-        }
-        if (sender === user1Id) {
-          data.unreadCount[user2Id]++;
-        } else {
-          data.unreadCount[user1Id]++;
-        }
-
-        // Create a new message object
-        const newMessage = {
-          sender,
-          senderName,
-          timestamp: new Date(),
-          body,
-        };
-
-        // Add the new message to the messages array
-        messages.push(newMessage);
-
-        // Update the chat document with the updated messages array and unread count
-        await updateDoc(chatDocRef, {
-          messages,
-          unreadCount: data.unreadCount,
-        });
-
-        // Return the new message object
-        return newMessage;
-      } else {
-        console.log("Chat not found");
-        return null;
+      if (!chatDocSnapshot.exists()) {
+        throw new Error("Chat does not exist.");
       }
+
+      const chatData = chatDocSnapshot.data();
+      const messages = chatData.messages || [];
+      const newMessage = {
+        sender,
+        senderName,
+        timestamp: new Date(), // Use server timestamps in real implementation
+        body,
+      };
+
+      // Add the new message to the chat's messages array
+      messages.push(newMessage);
+
+      // Update the chat document with the new message
+      await updateDoc(chatDocRef, { messages });
+
+      // Determine the recipient of the notification
+      const recipientId =
+        sender === chatData.user1Id ? chatData.user2Id : chatData.user1Id;
+
+      // Create the notification object
+      const notification = {
+        type: "message",
+        status: "unseen",
+        chatRoomId: chatId,
+        timestamp: new Date(), // Again, use server timestamps where applicable
+        senderId: sender,
+        recipientId: recipientId,
+      };
+
+      // Reference to the recipient's user document
+      const recipientRef = doc(db, "users", recipientId);
+      const recipientDoc = await getDoc(recipientRef);
+
+      if (!recipientDoc.exists()) {
+        throw new Error("Recipient does not exist.");
+      }
+
+      const recipientData = recipientDoc.data();
+      const notifications = recipientData.notifications || [];
+
+      // Add the new notification to the recipient's notifications array
+      notifications.push(notification);
+
+      // Update the recipient's user document with the new notification
+      await updateDoc(recipientRef, { notifications });
+
+      return newMessage;
     } catch (error) {
       console.error("Error adding message to chat:", error);
+      throw error;
+    }
+  };
+
+  const removeMessageNotificationsForChatRoom = async (userId, chatRoomId) => {
+    try {
+      // Reference to the user's document
+      const userRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userRef);
+
+      if (!userDoc.exists()) {
+        throw new Error("User does not exist.");
+      }
+
+      let userData = userDoc.data();
+      let notifications = userData.notifications || [];
+
+      // Filter out message notifications for the specified chat room
+      const filteredNotifications = notifications.filter(
+        (notification) =>
+          !(
+            notification.type === "message" &&
+            notification.chatRoomId === chatRoomId
+          )
+      );
+
+      // Update the user's document with the filtered notifications
+      await updateDoc(userRef, { notifications: filteredNotifications });
+
+      // After successful Firestore update, also update the Zustand store
+      const updatedNotifications = useMainStore
+        .getState()
+        .notifications.filter(
+          (notification) =>
+            !(
+              notification.type === "message" &&
+              notification.chatRoomId === chatRoomId
+            )
+        );
+      useMainStore.getState().setNotifications(updatedNotifications);
+
+      console.log("Message notifications for chat room removed successfully.");
+    } catch (error) {
+      console.error(
+        "Error removing message notifications for chat room:",
+        error
+      );
       throw error;
     }
   };
@@ -285,6 +339,7 @@ export const ChatContextProvider = ({ children }) => {
         getMessageDataById,
         addMessageToChat,
         getAllUserMessages,
+        removeMessageNotificationsForChatRoom,
         countChats,
         resetUnreadCount,
         countUnreadMessages,

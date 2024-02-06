@@ -78,6 +78,9 @@ export const AuthContextProvider = ({ children }) => {
         pictureUrl,
         favorites: [],
         email,
+        notifications: [],
+        appliedHouses: [],
+        houseId: [],
       });
     } catch (error) {
       throw error; // <-- Re-throw the error
