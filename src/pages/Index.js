@@ -48,7 +48,7 @@ const Index = () => {
   return (
     <Box>
       <Box sx={{ position: "relative" }}>
-        <Box className={styles.welcomeSectionContainer}>
+        <div className={styles.welcomeSectionContainer}>
           <div className={styles.headerText}>
             Welcome to <span className={styles.headerSpan}>የኛ Housing</span>
           </div>
@@ -89,15 +89,18 @@ const Index = () => {
 
             <Button
               variant="contained"
-              sx={{ backgroundColor: "#2D6072" }}
               onClick={() => navigate("/houses")}
               startIcon={<SearchIcon />}
-              style={{ height: "100%", width: "100%" }}
+              style={{
+                height: "100%",
+                width: "100%",
+                backgroundColor: "#2D6072",
+              }}
             >
               Explore houses
             </Button>
           </Box>
-        </Box>
+        </div>
         <div className={styles.root}>
           <div className={styles.carouselContainer}>
             <Carousel showArrows={true}>

@@ -83,7 +83,6 @@ function MessageDetail({ chatRoomId }) {
   useEffect(() => {
     // Set the active chat room when the component mounts
     setActiveChatRoomId(messageId);
-    console.log("youre on chat room : ", activeChatRoomId);
 
     return () => {
       // Reset the active chat room when the component unmounts
