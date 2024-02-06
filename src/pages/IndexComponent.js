@@ -80,9 +80,9 @@ const IndexComponent = () => {
     <div style={styles.container}>
       {/* Hero Section */}
       <section>
-        <Container className={styles.hero}>
+        <Container sx={styles.hero}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={12} className={styles.heroContent}>
+            <Grid item xs={12} md={12} sx={styles.heroContent}>
               <Typography variant="h3" gutterBottom sx={styles.sectionHeader}>
                 Welcome to House Exchange
               </Typography>
@@ -102,7 +102,7 @@ const IndexComponent = () => {
                 Get Started
               </Button>
             </Grid>
-            <Grid item xs={12} md={6} className={styles.heroImage}>
+            <Grid item xs={12} md={6} sx={styles.heroImage}>
               {/* Add hero image here */}
             </Grid>
           </Grid>
@@ -122,9 +122,9 @@ const IndexComponent = () => {
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
-              <Card className={styles.card}>
+              <Card sx={styles.card}>
                 <CardContent>
-                  <HouseIcon className={styles.stepIcon} />
+                  <HouseIcon sx={styles.stepIcon} />
                   <Typography variant="h5" gutterBottom>
                     Sign Up
                   </Typography>
@@ -138,9 +138,9 @@ const IndexComponent = () => {
               </Card>
             </Grid>
             <Grid item xs={12} md={4}>
-              <Card className={styles.card}>
+              <Card sx={styles.card}>
                 <CardContent>
-                  <ExploreIcon className={styles.stepIcon} />
+                  <ExploreIcon sx={styles.stepIcon} />
                   <Typography variant="h5" gutterBottom>
                     Browse Listings
                   </Typography>
@@ -153,9 +153,9 @@ const IndexComponent = () => {
               </Card>
             </Grid>
             <Grid item xs={12} md={4}>
-              <Card className={styles.card}>
+              <Card sx={styles.card}>
                 <CardContent>
-                  <ChatIcon className={styles.stepIcon} />
+                  <ChatIcon sx={styles.stepIcon} />
                   <Typography variant="h5" gutterBottom>
                     Contact Owners
                   </Typography>
@@ -179,10 +179,10 @@ const IndexComponent = () => {
       {/* Add your user testimonials here */}
 
       {/* Call to Action Section */}
-      <section className={styles.ctaSection}>
+      <section sx={styles.ctaSection}>
         <Container>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={12} className={styles.ctaContent}>
+            <Grid item xs={12} md={12} sx={styles.ctaContent}>
               <Typography variant="h3" gutterBottom sx={styles.sectionHeader}>
                 Ready to Start Your House Exchange Journey?
               </Typography>

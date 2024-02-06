@@ -39,13 +39,15 @@ function ResponsiveAppBar() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Filter out notifications that have a status of "seen"
-    const unreadNotifications = notifications?.filter(
-      (notification) =>
-        notification.status === "unseen" &&
-        notification.chatRoomId !== activeChatRoomId
-    );
-    setUnreadMessageCount(unreadNotifications.length);
+    if (user) {
+      // Filter out notifications that have a status of "seen"
+      const unreadNotifications = notifications?.filter(
+        (notification) =>
+          notification.status === "unseen" &&
+          notification.chatRoomId !== activeChatRoomId
+      );
+      setUnreadMessageCount(unreadNotifications?.length);
+    }
   }, [notifications]);
 
   useEffect(() => {

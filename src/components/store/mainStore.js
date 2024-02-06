@@ -5,7 +5,7 @@ const useMainStore = create(
   devtools(
     (set) => ({
       userData: null,
-      notifications: null,
+      notifications: [],
       messages: [],
       userHouse: null,
       favoriteHouses: null,

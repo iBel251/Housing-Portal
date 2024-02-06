@@ -54,21 +54,23 @@ const StoreInitializer = () => {
   }, [userId, refetchTrigger]);
 
   useEffect(() => {
-    const fetchAllHousesData = async () => {
-      try {
-        const houses = await fetchAllHouses();
-        if (houses) {
-          // Store the houses data in Zustand store
-          useMainStore.getState().setAllHouses(houses);
-        } else {
-          console.log("No houses found");
+    if (userId) {
+      const fetchAllHousesData = async () => {
+        try {
+          const houses = await fetchAllHouses();
+          if (houses) {
+            // Store the houses data in Zustand store
+            useMainStore.getState().setAllHouses(houses);
+          } else {
+            console.log("No houses found");
+          }
+        } catch (error) {
+          console.log("Error fetching all houses:", error);
         }
-      } catch (error) {
-        console.log("Error fetching all houses:", error);
-      }
-    };
+      };
 
-    fetchAllHousesData();
+      fetchAllHousesData();
+    }
   }, []);
 
   useEffect(() => {
@@ -104,18 +106,20 @@ const StoreInitializer = () => {
   }, [favoriteHouseIds]);
   // Fetch the total house count from Firestore using getTotalHouseCount
   useEffect(() => {
-    const fetchTotalHousePageCount = async () => {
-      try {
-        const PAGE_SIZE = 10;
-        const totalHouseNumber = await getTotalHouseCount();
-        const pages = Math.ceil(totalHouseNumber / PAGE_SIZE);
-        useMainStore.getState().setTotalHousePages(pages);
-      } catch (error) {
-        console.log("Error fetching total house count:", error);
-      }
-    };
+    if (userId) {
+      const fetchTotalHousePageCount = async () => {
+        try {
+          const PAGE_SIZE = 10;
+          const totalHouseNumber = await getTotalHouseCount();
+          const pages = Math.ceil(totalHouseNumber / PAGE_SIZE);
+          useMainStore.getState().setTotalHousePages(pages);
+        } catch (error) {
+          console.log("Error fetching total house count:", error);
+        }
+      };
 
-    fetchTotalHousePageCount();
+      fetchTotalHousePageCount();
+    }
   }, []);
 
   return null;
