@@ -28,9 +28,14 @@ const Recommended = () => {
   const [selectedHouseData, setSelectedHouseData] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const storedUserData = useMainStore((state) => state.userData);
+  const setActivePage = useMainStore((state) => state.setActivePage);
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const itemsPerPage = 10;
+
+  useEffect(() => {
+    setActivePage("recommended");
+  }, []);
 
   useEffect(() => {
     const fetchHouses = async () => {

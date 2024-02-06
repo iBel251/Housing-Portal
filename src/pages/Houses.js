@@ -13,6 +13,11 @@ function Houses() {
   const [isLoading, setIsLoading] = useState(true);
   const [filteredHouses, setFilteredHouses] = useState({});
   const allHouses = useMainStore((state) => state.allHouses);
+  const setActivePage = useMainStore((state) => state.setActivePage);
+
+  useEffect(() => {
+    setActivePage("houses");
+  }, []);
 
   useEffect(() => {
     if (filteredHouses && filteredHouses.length === 0) {

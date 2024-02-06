@@ -9,11 +9,13 @@ import {
   Button,
   Snackbar,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import { HashLoader } from "react-spinners";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { UserAuth } from "../context/AuthContext";
-import { HouseAuth } from "../context/HouseContext";
+import { RoommateAuth } from "../context/RoommateContext";
+import RoommateFormModal from "./RoommateFormModal";
 
 const styles = {
   container: {
@@ -41,47 +43,89 @@ const styles = {
 };
 
 const RoommateDisplay = ({ houseData }) => {
-  const { roommateData } = houseData;
   const { user } = UserAuth();
-  const { toggleInterestInHouse } = HouseAuth();
   const [isInterested, setIsInterested] = useState(false);
-  const [interestedCount, setInterestedCount] = useState(
-    houseData?.roommateData?.interestedPeople?.length || 0
-  );
+  const [interestedCount, setInterestedCount] = useState(0);
+  const [registeredCount, setRegisteredCount] = useState(0);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [openFormDialog, setOpenFormDialog] = useState(false);
+  useEffect(() => {
+    // console.log(houseData.roommateData);
+    console.log(user.uid);
+    // Adjusted to work with objects instead of arrays
+    setIsInterested(
+      Object.hasOwnProperty.call(
+        houseData?.roommateData?.interestedPeople,
+        user.uid
+      )
+    );
+    setInterestedCount(
+      Object.keys(houseData?.roommateData?.interestedPeople || {}).length
+    );
+    setRegisteredCount(
+      Object.keys(houseData?.roommateData?.registeredPeople || {}).length
+    );
+  }, [houseData, user.uid]);
+  if (!houseData.roommateData) {
+    return;
+  }
+  const { roommateData } = houseData;
+  const { toggleInterestInHouse } = RoommateAuth();
 
-  // Safely access the data with optional chaining
-  const registeredCount = roommateData?.registeredPeople?.length || 0;
   const preferences = roommateData?.preferences || [];
   const commonRooms = roommateData?.commonRooms || [];
 
-  useEffect(() => {
-    setIsInterested(
-      houseData?.roommateData?.interestedPeople?.includes(user.uid)
-    );
-  }, [houseData, user.uid]);
+  const handleOpenForm = () => {
+    if (isInterested) {
+      toggleInrollment();
+    } else {
+      setOpenFormDialog(true);
+    }
+  };
 
-  const handleEnrollClick = async () => {
+  const handleFormSubmit = async (formData) => {
+    setOpenFormDialog(false); // Close the form dialog
+    toggleInrollment(formData);
+  };
+
+  const toggleInrollment = async (formData) => {
+    setLoading(true);
     try {
-      await toggleInterestInHouse(houseData.id, user.uid);
-      setIsInterested(!isInterested);
-      if (isInterested) {
-        setInterestedCount((prevCount) => prevCount - 1);
-        setSnackbarMessage("You have successfully withdrawn your interest.");
-      } else {
+      // First, toggle the interest state
+      await toggleInterestInHouse(houseData.id, user.uid, formData); // Assuming this function can also handle formData if needed
+      setIsInterested(!isInterested); // Update the interested state based on the toggle action
+
+      // Next, decide what action was taken (enroll or withdraw) based on the new state of isInterested
+      if (!isInterested) {
+        // Note the use of !isInterested because we've already toggled the state
+        // Enroll scenario: Increase interestedCount and set the success message
         setInterestedCount((prevCount) => prevCount + 1);
         setSnackbarMessage(
           "You have successfully enrolled for shared housing. Contact owner for further processing."
         );
+      } else {
+        // Withdraw scenario: Decrease interestedCount and set the withdrawal message
+        setInterestedCount((prevCount) => prevCount - 1);
+        setSnackbarMessage("You have successfully withdrawn your interest.");
       }
-      setOpenSnackbar(true);
+
+      // Optionally, handle form data here if your application needs to store this information
+      // For example, updating user profile with formData details
+      // This part depends on how you've set up your backend to receive and store this additional data
+
+      setOpenSnackbar(true); // Show the snackbar with the success message
     } catch (error) {
       console.error("Error toggling interest:", error);
-      // Handle error case, possibly set a different snackbar message
+      // Optionally, set a snackbar message for errors
+      setSnackbarMessage("An error occurred. Please try again.");
+      setOpenSnackbar(true);
     }
+
+    setLoading(false); // Reset loading state regardless of the outcome
   };
+
   const handleCloseSnackbar = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -138,12 +182,31 @@ const RoommateDisplay = ({ houseData }) => {
           )}
         </AccordionDetails>
       </Accordion>
+
       <Button
         variant="contained"
         style={styles.enrollButton}
-        onClick={handleEnrollClick}
+        onClick={handleOpenForm}
+        disabled={loading} // Disable the button while loading
       >
-        {isInterested ? "Withdraw Interest" : "Enroll for Shared Housing"}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {loading ? (
+            <CircularProgress
+              size={24}
+              style={{ color: "white", marginRight: "8px" }}
+            />
+          ) : isInterested ? (
+            "Withdraw Interest"
+          ) : (
+            "Enroll for Shared Housing"
+          )}
+        </Box>
       </Button>
       <Snackbar
         open={openSnackbar}
@@ -158,6 +221,11 @@ const RoommateDisplay = ({ houseData }) => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+      <RoommateFormModal
+        open={openFormDialog}
+        onClose={() => setOpenFormDialog(false)}
+        onSubmit={handleFormSubmit}
+      />
     </Paper>
   );
 };

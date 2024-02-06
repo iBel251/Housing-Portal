@@ -16,20 +16,26 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { HouseAuth } from "../../context/HouseContext";
+import { RoommateAuth } from "../../context/RoommateContext";
 
 const RoommateDetails = ({ houseData }) => {
-  const { updateRoommateData } = HouseAuth();
   // Initial state setup for roommateData
-  const [roommateData, setRoommateData] = useState(
-    houseData.roommateData || {
-      preferences: [],
-      commonRooms: [],
-      interestedPeople: [],
-      registeredPeople: [],
-    }
-  );
+  const [roommateData, setRoommateData] = useState({
+    ...houseData.roommateData,
+    interestedPeople: houseData.roommateData?.interestedPeople || {},
+    registeredPeople: houseData.roommateData?.registeredPeople || {},
+  });
 
   const [expanded, setExpanded] = useState(false);
+  // Input states for new entries
+  const [inputValue, setInputValue] = useState({
+    preferences: "",
+    commonRooms: "",
+  });
+  if (!houseData.roommateData) {
+    return;
+  }
+  const { updateRoommateData } = RoommateAuth();
 
   // Sample suggestions for autocomplete (you can replace these with your actual data)
   const preferenceSuggestions = ["Quiet", "Clean", "Student", "Professional"];
@@ -63,12 +69,6 @@ const RoommateDetails = ({ houseData }) => {
     // Persist the update to Firestore
     updateRoommateData(houseData.id, updatedRoommateData);
   };
-
-  // Input states for new entries
-  const [inputValue, setInputValue] = useState({
-    preferences: "",
-    commonRooms: "",
-  });
 
   const updateInputValue = (type, newValue) => {
     setInputValue((prevValues) => ({
@@ -137,12 +137,14 @@ const RoommateDetails = ({ houseData }) => {
       <Grid item xs={12} sm={6}>
         <Paper elevation={3} style={{ padding: "16px", marginBottom: "16px" }}>
           <Typography variant="h6">
-            Interested People: {roommateData.interestedPeople.length}
+            Interested People:{" "}
+            {Object.keys(roommateData.interestedPeople).length}
           </Typography>
         </Paper>
         <Paper elevation={3} style={{ padding: "16px" }}>
           <Typography variant="h6">
-            Registered People: {roommateData.registeredPeople.length}
+            Registered People:{" "}
+            {Object.keys(roommateData.registeredPeople).length}
           </Typography>
         </Paper>
       </Grid>

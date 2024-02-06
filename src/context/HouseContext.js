@@ -89,7 +89,7 @@ export const HouseContextProvider = ({ children }) => {
       let roommateData = {};
       if (type === "roommate/shared") {
         roommateData = {
-          interestedPeople: [],
+          interestedPeople: {},
           registeredPeople: [],
           preferences: [],
           commonRooms: [],
@@ -494,91 +494,6 @@ export const HouseContextProvider = ({ children }) => {
     }
   };
 
-  const toggleInterestInHouse = async (houseId, userId) => {
-    try {
-      // Reference to the specific house document in the 'houses' collection
-      const houseRef = doc(db, "houses", houseId);
-      const houseDoc = await getDoc(houseRef);
-      if (!houseDoc.exists()) {
-        throw new Error("House does not exist.");
-      }
-      let houseData = houseDoc.data();
-
-      // Initialize roommateData if it doesn't exist
-      if (!houseData.roommateData) {
-        houseData.roommateData = {
-          interestedPeople: [],
-          registeredPeople: [],
-          preferences: [],
-          commonRooms: [],
-        };
-      }
-
-      let updatedInterestedPeople;
-      // Toggle userId in interestedPeople array
-      if (houseData.roommateData.interestedPeople.includes(userId)) {
-        // Remove userId from interestedPeople
-        updatedInterestedPeople =
-          houseData.roommateData.interestedPeople.filter((id) => id !== userId);
-      } else {
-        // Add userId to interestedPeople
-        updatedInterestedPeople = [
-          ...houseData.roommateData.interestedPeople,
-          userId,
-        ];
-      }
-
-      // Update house document with the new interestedPeople array
-      await updateDoc(houseRef, {
-        "roommateData.interestedPeople": updatedInterestedPeople,
-      });
-
-      // Reference to the user's document in the 'users' collection
-      const userRef = doc(db, "users", userId);
-      const userDoc = await getDoc(userRef);
-      if (!userDoc.exists()) {
-        throw new Error("User does not exist.");
-      }
-      const userData = userDoc.data();
-
-      let updatedAppliedHouses;
-      // Toggle houseId in appliedHouses array
-      if (userData.appliedHouses && userData.appliedHouses.includes(houseId)) {
-        // Remove houseId from appliedHouses
-        updatedAppliedHouses = userData.appliedHouses.filter(
-          (id) => id !== houseId
-        );
-      } else {
-        // Add houseId to appliedHouses
-        updatedAppliedHouses = userData.appliedHouses
-          ? [...userData.appliedHouses, houseId]
-          : [houseId];
-      }
-
-      // Update user document with the new appliedHouses array
-      await updateDoc(userRef, {
-        appliedHouses: updatedAppliedHouses,
-      });
-    } catch (error) {
-      console.error("Error toggling interest in the house:", error);
-      throw error;
-    }
-  };
-
-  const updateRoommateData = async (houseId, updatedRoommateData) => {
-    try {
-      const houseRef = doc(db, "houses", houseId);
-
-      // Update only the roommateData field of the house document
-      await updateDoc(houseRef, {
-        roommateData: updatedRoommateData,
-      });
-    } catch (error) {
-      console.error("Error updating roommate data:", error);
-      throw error;
-    }
-  };
-
   const countHouses = async () => {
     try {
       const housesCollectionRef = collection(db, "houses");
@@ -678,8 +593,6 @@ export const HouseContextProvider = ({ children }) => {
         toggleHouseInFavorites,
         getFevoriteHousesByIds,
         getHousesByPreferences,
-        toggleInterestInHouse,
-        updateRoommateData,
         countHouses,
         searchHouses,
         deleteHouse,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import {
@@ -15,6 +15,7 @@ import "./carousel.css";
 import IndexComponent from "./IndexComponent";
 import coverimage from "../assets/coveremage.jpeg";
 import { useNavigate } from "react-router-dom";
+import useMainStore from "../components/store/mainStore";
 
 const styles = {
   root: {
@@ -37,6 +38,11 @@ const styles = {
 };
 
 const Index = () => {
+  const setActivePage = useMainStore((state) => state.setActivePage);
+
+  useEffect(() => {
+    setActivePage("home");
+  }, []);
   const navigate = useNavigate();
 
   return (

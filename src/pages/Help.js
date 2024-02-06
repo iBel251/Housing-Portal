@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Typography,
@@ -7,6 +7,7 @@ import {
   ListItemText,
   Divider,
 } from "@mui/material";
+import useMainStore from "../components/store/mainStore";
 
 const styles = {
   root: {
@@ -35,6 +36,11 @@ const styles = {
 };
 
 function Help() {
+  const setActivePage = useMainStore((state) => state.setActivePage);
+
+  useEffect(() => {
+    setActivePage("help");
+  }, []);
   return (
     <Box sx={styles.root}>
       <Typography variant="h4" gutterBottom sx={styles.title}>

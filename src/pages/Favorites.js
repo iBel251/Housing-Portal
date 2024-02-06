@@ -58,6 +58,11 @@ function Favorites() {
   const [modalOpen, setModalOpen] = useState(false);
 
   const storedUserData = useMainStore((state) => state.userData);
+  const setActivePage = useMainStore((state) => state.setActivePage);
+
+  useEffect(() => {
+    setActivePage("favorites");
+  }, []);
 
   const PAGE_SIZE = 5; // Number of houses per page
   const favHouseIds = useMainStore((state) => state.userData.favorites);

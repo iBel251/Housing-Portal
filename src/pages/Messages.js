@@ -1,22 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Container,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  Avatar,
-  Grid,
-  CircularProgress,
-  Badge,
-} from "@mui/material";
-import { Link } from "react-router-dom";
+import { AppBar, Toolbar, Container, Box, Badge, Button } from "@mui/material";
 import { UserAuth } from "../context/AuthContext";
 import { ChatAuth } from "../context/ChatContext";
+import useMainStore from "../components/store/mainStore";
+import { Outlet, Link } from "react-router-dom";
 
 const styles = {
   root: {
@@ -24,105 +11,80 @@ const styles = {
   },
   appBar: {
     marginBottom: "5px",
-    backgroundColor: "orange",
+    backgroundColor: "rgba(255, 165, 0, 0.1)",
     color: "#2D6072",
   },
-  paper: {
-    padding: "5px",
-  },
-  avatar: {
-    marginRight: "5px",
-  },
-  messageSection: {
-    width: "50%",
-    minHeight: "500px",
+  navButton: {
+    color: "#2D6072",
+    marginLeft: "10px",
+    border: "2px solid #2D6072",
+    "&:hover": {
+      backgroundColor: "rgba(255, 255, 255, 0.7)",
+    },
   },
 };
 
 function Messages() {
   const { user } = UserAuth();
   const { getAllUserMessages } = ChatAuth();
-  const [userMessages, setUserMessages] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const notifications = useMainStore((state) => state.notifications);
+  const activeChatRoomId = useMainStore((state) => state.activeChatRoomId);
+  const setActivePage = useMainStore((state) => state.setActivePage);
 
+  // You might still want to fetch user messages for showing counts or other purposes
   useEffect(() => {
-    setIsLoading(true); // Set loading to true before fetching data
+    setActivePage("messages");
     const fetchUserMessages = async () => {
       try {
         const messages = await getAllUserMessages(user.uid);
-        setUserMessages(messages);
-        setIsLoading(false); // Set loading to false after fetching data
+        // Assuming you might use these messages for something else, like a sidebar
       } catch (error) {
         console.error("Error fetching user messages:", error);
-        setIsLoading(false); // Set loading to false if an error occurs
       }
     };
 
-    fetchUserMessages();
-  }, [getAllUserMessages, user.uid]);
+    if (user?.uid) {
+      fetchUserMessages();
+    }
+  }, [getAllUserMessages, user?.uid]);
+
+  // Count message and enrollment notifications
+  const messageCount = notifications.filter(
+    (notification) =>
+      notification.type === "message" &&
+      notification.chatRoomId !== activeChatRoomId
+  ).length;
+  const enrollmentCount = notifications.filter(
+    (notification) =>
+      notification.type === "enrollment" && notification.status === "unseen"
+  ).length;
 
   return (
     <div style={styles.root}>
       <AppBar position="static" sx={styles.appBar}>
         <Toolbar>
-          <Typography variant="h6">Messages</Typography>
+          <Box
+            sx={{ flexGrow: 1, display: "flex", justifyContent: "flex-start" }}
+          >
+            <Badge badgeContent={messageCount} color="error">
+              <Button component={Link} to="/messages" sx={styles.navButton}>
+                Messages
+              </Button>
+            </Badge>
+            <Badge badgeContent={enrollmentCount} color="error">
+              <Button
+                component={Link}
+                to="/messages/notifications"
+                sx={styles.navButton}
+              >
+                Requests
+              </Button>
+            </Badge>
+          </Box>
         </Toolbar>
       </AppBar>
       <Container>
-        <Grid container spacing={2}>
-          <Grid item xs={12} lg={6} style={styles.messageSection}>
-            <Paper sx={styles.paper}>
-              {isLoading ? (
-                <>
-                  <CircularProgress />
-                  <Typography>Loading messages ...</Typography>
-                </>
-              ) : userMessages.length > 0 ? (
-                <List>
-                  {userMessages?.map((message) => (
-                    <React.Fragment key={message.chatRoomId}>
-                      <ListItem
-                        alignItems="flex-start"
-                        component={Link}
-                        to={`/messages/${message.chatRoomId}`}
-                      >
-                        <Badge
-                          color="error"
-                          badgeContent={
-                            message.messagesData.unreadCount?.[user.uid] || 0
-                          }
-                          invisible={
-                            !(message.messagesData.unreadCount?.[user.uid] > 0)
-                          } // Display badge only if there are unread messages
-                        >
-                          <Avatar alt="User" sx={styles.avatar}>
-                            {message.messagesData?.user1Name[0]}
-                          </Avatar>
-                        </Badge>
-                        <ListItemText
-                          primary={
-                            user.uid !== message.messagesData.user1Id
-                              ? message.messagesData.user1Name
-                              : message.messagesData.user2Name
-                          }
-                          secondary={
-                            message?.messagesData?.messages[
-                              message?.messagesData?.messages.length - 1
-                            ]?.body
-                          }
-                        />
-                      </ListItem>
-                      <Divider component="li" />
-                    </React.Fragment>
-                  ))}
-                </List>
-              ) : (
-                <Typography>No messages found.</Typography>
-              )}
-            </Paper>
-          </Grid>
-          {/* Add other content on the right side */}
-        </Grid>
+        <Outlet />
       </Container>
     </div>
   );
