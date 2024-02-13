@@ -16,6 +16,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Box,
 } from "@mui/material";
 import "leaflet/dist/leaflet.css";
 
@@ -109,16 +110,18 @@ const NewHouseForm = ({ formData, handleInputChange, handleImageChange }) => {
     console.log("formData updated:", formData);
   }, [formData]);
   return (
-    <>
+    <Box>
       <Typography variant="body1" style={{ margin: "10px 0" }}>
         Please ensure you are at the house location before setting the location.
       </Typography>
-
       <Button
         variant="contained"
-        color="primary"
         onClick={getCurrentLocation}
-        style={{ marginBottom: "3px" }}
+        style={{
+          margin: "0 0 3px 0",
+          background: "#2D6072",
+          alignSelf: "left",
+        }}
       >
         Set House Location
       </Button>
@@ -254,7 +257,7 @@ const NewHouseForm = ({ formData, handleInputChange, handleImageChange }) => {
         onChange={(event) => handleInputChange("area", event.target.value)}
         style={styles.formControl}
       />
-    </>
+    </Box>
   );
 };
 

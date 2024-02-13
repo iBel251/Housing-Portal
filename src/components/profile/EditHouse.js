@@ -14,6 +14,7 @@ import {
   renderHouseDetails,
   renderMapDisplay,
 } from "../functions/houseEditFunctions.js";
+import FeedbackDisplay from "./FeedbackDisplay.js";
 
 const styles = {
   container: {
@@ -275,6 +276,11 @@ const EditHouse = ({ houseId }) => {
         </Button>
         <Typography variant="h6">House Location on Map</Typography>
         {renderMapDisplay(house)}
+      </Box>
+      <Box>
+        {house?.feedback ? (
+          <FeedbackDisplay feedbackData={house.feedback} />
+        ) : null}
       </Box>
     </Box>
   );

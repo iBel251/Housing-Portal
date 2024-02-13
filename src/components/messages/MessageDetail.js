@@ -13,10 +13,19 @@ import {
   Avatar,
   TextField,
   Button,
+  Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import { UserAuth } from "../../context/AuthContext";
 import { ChatAuth } from "../../context/ChatContext";
+import { FeedbackAuth } from "../../context/FeedbackContext";
 import useMainStore from "../../components/store/mainStore";
+import Report from "../Report";
+import ReportIcon from "@mui/icons-material/Report";
 
 const styles = {
   root: {
@@ -49,6 +58,13 @@ const styles = {
     overflowY: "auto",
     // Other styles as needed
   },
+  reportBtnsContainer: {
+    display: "flex",
+    margin: "10px",
+    justifyContent: "end",
+    alignItems: "end",
+    gap: "3px",
+  },
 };
 
 function MessageDetail({ chatRoomId }) {
@@ -59,8 +75,13 @@ function MessageDetail({ chatRoomId }) {
     resetUnreadCount,
     removeMessageNotificationsForChatRoom,
   } = ChatAuth();
+  const { toggleUserInBlockedList } = FeedbackAuth();
   const [messageData, setMessageData] = useState(null);
   const [response, setResponse] = useState("");
+  const [openReportDialog, setOpenReportDialog] = useState(false);
+  const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false); // State to track if the user is blocked
+  const [blockedStatus, setBlockedStatus] = useState(false); // State to track if the user is blocked
   const userData = useMainStore((state) => state.userData);
   const toggleRecount = useMainStore((state) => state.toggleRecount);
   const refetchMessages = useMainStore((state) => state.toggleMessagesRefetch);
@@ -81,6 +102,26 @@ function MessageDetail({ chatRoomId }) {
   }
 
   useEffect(() => {
+    // Assuming you have access to a method to check if the user is blocked
+    // and userData includes a list of blocked user IDs
+    const checkIfBlocked = async () => {
+      const otherUserId =
+        messageData.user1Id === user.uid
+          ? messageData.user2Id
+          : messageData.user1Id;
+      if (messageData.blockStatus.otherUserId === true) {
+        setIsBlocked(true);
+      } else {
+        setIsBlocked(false);
+      }
+    };
+
+    if (messageData) {
+      checkIfBlocked();
+    }
+  }, [messageData, userData.blockedList, user.uid]);
+
+  useEffect(() => {
     // Set the active chat room when the component mounts
     setActiveChatRoomId(messageId);
 
@@ -89,6 +130,15 @@ function MessageDetail({ chatRoomId }) {
       setActiveChatRoomId(null);
     };
   }, [messageId]);
+
+  useEffect(() => {
+    if (messageData?.blockStatus?.[user.uid] === true) {
+      setBlockedStatus(true);
+    } else {
+      setBlockedStatus(false);
+    }
+    console.log("you are blocked set to : ", blockedStatus);
+  }, [messageData]);
 
   useEffect(() => {
     let unsubscribe;
@@ -169,6 +219,29 @@ function MessageDetail({ chatRoomId }) {
     setResponse(event.target.value);
   };
 
+  const handleOpenReportDialog = () => {
+    setOpenReportDialog(true);
+  };
+
+  const handleCloseReportDialog = () => {
+    setOpenReportDialog(false);
+  };
+
+  const handleBlockUserClick = () => {
+    // Open the confirmation dialog
+    setOpenConfirmationDialog(true);
+  };
+
+  const handleCloseConfirmationDialog = (confirmed) => {
+    // Close the confirmation dialog
+    setOpenConfirmationDialog(false);
+
+    // If confirmed, proceed with the block/unblock action
+    if (confirmed) {
+      handleBlockUser();
+    }
+  };
+
   // Event handler for sending the response
   const handleSendResponse = async () => {
     if (messageData && response) {
@@ -196,17 +269,25 @@ function MessageDetail({ chatRoomId }) {
     }
   };
 
+  const handleBlockUser = async () => {
+    if (messageData) {
+      let bolckedId = messageData.user1Id;
+      if (messageData.user1Id === user.uid) {
+        bolckedId = messageData.user2Id;
+      }
+
+      await toggleUserInBlockedList(bolckedId, messageId);
+      setIsBlocked(!isBlocked);
+    }
+    console.log(messageData);
+  };
+
   if (!messageData) {
     return <div>Loading...</div>;
   }
 
   return (
     <div style={styles.root}>
-      <AppBar position="static" sx={styles.appBar}>
-        <Toolbar>
-          <Typography variant="h6">Message Detail</Typography>
-        </Toolbar>
-      </AppBar>
       <Container
         sx={{
           padding: "0px",
@@ -215,6 +296,12 @@ function MessageDetail({ chatRoomId }) {
           marginRight: "auto",
         }}
       >
+        <Report
+          open={openReportDialog}
+          onClose={handleCloseReportDialog}
+          targetId={messageId}
+          type={"user"}
+        />
         <Paper
           elevation={3}
           style={{
@@ -224,8 +311,52 @@ function MessageDetail({ chatRoomId }) {
             maxWidth: "600px",
           }}
         >
+          <Box style={styles.reportBtnsContainer}>
+            <Button
+              variant="outlined"
+              style={{ color: "orange", borderColor: "orange" }}
+              onClick={handleBlockUserClick}
+            >
+              {isBlocked ? "Unblock" : "Block"}
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleOpenReportDialog}
+            >
+              Report
+              <ReportIcon sx={{ marginLeft: "5px", fontSize: "25px" }} />
+            </Button>
+            <Dialog
+              open={openConfirmationDialog}
+              onClose={() => handleCloseConfirmationDialog(false)}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {`Confirm ${isBlocked ? "Unblock" : "Block"}`}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Are you sure you want to {isBlocked ? "unblock" : "block"}{" "}
+                  this user? <br />
+                  {!isBlocked ? "User can no longer message you." : ""}
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => handleCloseConfirmationDialog(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => handleCloseConfirmationDialog(true)}
+                  autoFocus
+                >
+                  {isBlocked ? "Unblock" : "Block"}
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Box>
           <div style={styles.responseSection}>
-            <Typography variant="h6">Conversation:</Typography>
             <div id="messageListContainer" style={styles.messageListContainer}>
               <List>
                 {messageData?.messages.map((item, index) => (
@@ -257,23 +388,32 @@ function MessageDetail({ chatRoomId }) {
               </List>
             </div>
             <div />
-            <div style={styles.responseForm}>
-              <TextField
-                value={response}
-                label="Type your message here"
-                variant="outlined"
-                style={styles.responseInput}
-                onChange={handleResponseChange}
-                onKeyDown={handleKeyPress}
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSendResponse}
-              >
-                Send
-              </Button>
-            </div>
+            {blockedStatus ? (
+              "you have been blocked. Can't send messages to this user."
+            ) : (
+              <div style={styles.responseForm}>
+                <TextField
+                  value={response}
+                  label="Type your message here"
+                  variant="outlined"
+                  style={styles.responseInput}
+                  onChange={handleResponseChange}
+                  onKeyDown={handleKeyPress}
+                />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSendResponse}
+                  style={{
+                    color: "orange",
+                    background: "#2D6072",
+                    height: "55px",
+                  }}
+                >
+                  Send
+                </Button>
+              </div>
+            )}
           </div>
           <Link to="/messages" style={backLinkStyle}>
             Back to Messages

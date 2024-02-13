@@ -146,8 +146,7 @@ const AddHouse = () => {
 
   return (
     <Box style={styles.modalContainer}>
-      <Typography variant="h6">Register Your House</Typography>
-      <Typography>
+      <Typography variant="h5">
         Fill in the details to register your house for listing.
       </Typography>
       <NewHouseForm

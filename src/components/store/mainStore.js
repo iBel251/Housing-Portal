@@ -14,7 +14,7 @@ const useMainStore = create(
       recountTrigger: false,
       refetchMessagesTrigger: false,
       unreadMessageCount: 0,
-      allHouses: null,
+      allHouses: [],
       last: null,
       activeLink: "home",
       activePage: null,

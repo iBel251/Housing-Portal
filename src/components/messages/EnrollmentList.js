@@ -11,15 +11,19 @@ import {
   Box,
   CircularProgress,
   Dialog,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MessageIcon from "@mui/icons-material/Message";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
+import RestoreIcon from "@mui/icons-material/Restore";
 import CallIcon from "@mui/icons-material/Call";
 import { RoommateAuth } from "../../context/RoommateContext";
 import { ChatAuth } from "../../context/ChatContext";
 import { useNavigate } from "react-router-dom";
 import MessageDetail from "./MessageDetail";
+import useMainStore from "../store/mainStore";
 
 const styles = {
   container: {
@@ -36,6 +40,13 @@ const styles = {
     padding: "5px",
     borderLeft: "1px solid red",
     borderRight: "1px solid red",
+  },
+  restoreBtn: {
+    margin: "0 25px",
+    color: "green",
+    padding: "5px",
+    borderLeft: "1px solid green",
+    borderRight: "1px solid green",
   },
   unseenNotification: {
     backgroundColor: "#f0f0f0",
@@ -58,12 +69,18 @@ const styles = {
 const EnrollmentList = ({ houseData, roommateNotifications }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedChatRoomId, setSelectedChatRoomId] = useState(null);
+  const [showRemoved, setShowRemoved] = useState(false);
   const { updateNotificationStatusToSeen } = RoommateAuth();
   const { createChatRoom } = ChatAuth();
   const navigate = useNavigate();
-  roommateNotifications = roommateNotifications.filter(
-    (notification) => notification.status != "removed"
-  );
+  const toggleRefetch = useMainStore((state) => state.toggleRefetch);
+  const displayedNotifications = showRemoved
+    ? roommateNotifications.filter(
+        (notification) => notification.status === "removed"
+      )
+    : roommateNotifications.filter(
+        (notification) => notification.status !== "removed"
+      );
 
   // Early return if data is not yet loaded
   if (!roommateNotifications || roommateNotifications.length === 0) {
@@ -73,6 +90,10 @@ const EnrollmentList = ({ houseData, roommateNotifications }) => {
       </Box>
     );
   }
+
+  const handleShowRemovedChange = (event) => {
+    setShowRemoved(event.target.checked);
+  };
 
   const handleOpenDialog = (chatRoomId) => {
     setSelectedChatRoomId(chatRoomId);
@@ -104,7 +125,7 @@ const EnrollmentList = ({ houseData, roommateNotifications }) => {
       }
     };
 
-  const sortedNotifications = roommateNotifications.sort(
+  const sortedNotifications = displayedNotifications.sort(
     (a, b) => b.date - a.date
   );
 
@@ -130,11 +151,30 @@ const EnrollmentList = ({ houseData, roommateNotifications }) => {
 
     // Further actions can be implemented here
   };
+  const handleRestoreClick = (event, userId, houseId) => {
+    event.stopPropagation(); // Prevents accordion toggle
+    updateNotificationStatusToSeen(userId, houseId, "seen"); // Mark the notification as seen
+
+    // Further actions can be implemented here
+  };
   return (
     <Box style={styles.container}>
+      <FormControlLabel
+        control={
+          <Switch checked={showRemoved} onChange={handleShowRemovedChange} />
+        }
+        label="Show Removed Notifications"
+      />
       {sortedNotifications.map((notification, index) => {
         const interestedPerson =
           houseData.roommateData.interestedPeople[notification.userId];
+        if (!interestedPerson) {
+          // If interestedPerson does not exist, you can return null or a placeholder component for this notification
+          console.log(`Missing data for user ID: ${notification.userId}`);
+          return null; // or any placeholder component
+        }
+        console.log("sortedNotifications : ", sortedNotifications);
+        console.log("interested person : ", interestedPerson);
         const panelId = `panel${index}`;
         const isUnseen = notification.status === "unseen";
         return (
@@ -167,34 +207,62 @@ const EnrollmentList = ({ houseData, roommateNotifications }) => {
                 </Typography>
 
                 <Box>
-                  <IconButton
-                    aria-label="message"
-                    size="large"
-                    style={styles.messageBtn}
-                    onClick={(event) =>
-                      handleMessageClick(
-                        event,
-                        notification.userId,
-                        interestedPerson.fullname
-                      )
-                    }
-                  >
-                    <MessageIcon fontSize="inherit" />
-                  </IconButton>
-                  <IconButton
-                    aria-label="remove"
-                    size="large"
-                    style={styles.deleteBtn}
-                    onClick={(event) =>
-                      handleRemoveClick(
-                        event,
-                        notification.userId,
-                        houseData.id
-                      )
-                    }
-                  >
-                    <DeleteSweepIcon fontSize="inherit" />
-                  </IconButton>
+                  {showRemoved ? (
+                    <Box
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        color: "green",
+                      }}
+                    >
+                      <Typography>Restore</Typography>
+                      <IconButton
+                        aria-label="restore"
+                        size="large"
+                        style={styles.restoreBtn}
+                        onClick={(event) =>
+                          handleRestoreClick(
+                            event,
+                            notification.userId,
+                            houseData.id
+                          )
+                        }
+                      >
+                        <RestoreIcon fontSize="inherit" />
+                      </IconButton>
+                    </Box>
+                  ) : (
+                    <>
+                      <IconButton
+                        aria-label="message"
+                        size="large"
+                        style={styles.messageBtn}
+                        onClick={(event) =>
+                          handleMessageClick(
+                            event,
+                            notification.userId,
+                            interestedPerson.fullname
+                          )
+                        }
+                      >
+                        <MessageIcon fontSize="inherit" />
+                      </IconButton>
+                      <IconButton
+                        aria-label="remove"
+                        size="large"
+                        style={styles.deleteBtn}
+                        onClick={(event) =>
+                          handleRemoveClick(
+                            event,
+                            notification.userId,
+                            houseData.id
+                          )
+                        }
+                      >
+                        <DeleteSweepIcon fontSize="inherit" />
+                      </IconButton>
+                    </>
+                  )}
                 </Box>
               </Box>
             </AccordionSummary>

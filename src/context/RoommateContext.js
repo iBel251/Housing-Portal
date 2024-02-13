@@ -173,12 +173,59 @@ export const RoommateContextProvider = ({ children }) => {
     }
   };
 
+  const manageRegisteredPeople = async (houseId, person, action) => {
+    try {
+      const houseRef = doc(db, "houses", houseId);
+      const houseDoc = await getDoc(houseRef);
+      if (!houseDoc.exists()) throw new Error("House does not exist.");
+      let houseData = houseDoc.data();
+
+      // Ensure the roommateData structure exists
+      if (!houseData.roommateData) {
+        houseData.roommateData = {
+          interestedPeople: {},
+          registeredPeople: [],
+          preferences: [],
+          commonRooms: [],
+        };
+      }
+
+      let updatedRegisteredPeople = [
+        ...houseData.roommateData.registeredPeople,
+      ];
+
+      if (action === "add") {
+        // Add the new person if not already in the list
+        const isExisting = updatedRegisteredPeople.some(
+          (registeredPerson) => registeredPerson.phone === person.phone
+        );
+        if (!isExisting) {
+          updatedRegisteredPeople.push(person);
+        }
+      } else if (action === "delete") {
+        // Delete the person from the list
+        updatedRegisteredPeople = updatedRegisteredPeople.filter(
+          (registeredPerson) => registeredPerson.phone !== person.phone
+        );
+      }
+
+      // Update the house document with the new list of registeredPeople
+      await updateDoc(houseRef, {
+        "roommateData.registeredPeople": updatedRegisteredPeople,
+      });
+    } catch (error) {
+      console.error("Error managing registered people:", error);
+      throw error;
+    }
+  };
+
   return (
     <RoommateContext.Provider
       value={{
         updateRoommateData,
         toggleInterestInHouse,
         updateNotificationStatusToSeen,
+        manageRegisteredPeople,
       }}
     >
       {children}

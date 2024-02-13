@@ -1,3 +1,45 @@
+body {
+    margin: 0;
+    background-color: white;
+    font-family: 'Lato',sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  
+    /* Apply custom scrollbar styles to the whole page */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #888 #f1f1f1; /* Firefox */
+  
+    /* Webkit-based browsers (Chrome, Safari) */
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
+*{
+    font-family: 'Lato',sans-serif;
+}
+
+/* Customize scrollbar track */
+::-webkit-scrollbar {
+    width: 8px;
+}
+  
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+  
+/* Customize scrollbar thumb */
+::-webkit-scrollbar-thumb {
+    background: rgb(142, 101, 25);
+}
+  
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(215, 143, 10);
+}
+  
+::-webkit-scrollbar-thumb:active {
+    background: orange;
+}
+  
+  
 .menu-link.active::before {
     content: "";
     position: absolute;

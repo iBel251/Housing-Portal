@@ -1,6 +1,6 @@
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useFilteredHouses } from "./functions/houseFunctions";
+import { useFilteredHouses } from "../functions/houseFunctions";
 
 const Filter = ({ setFilteredHouses }) => {
   const [subcity, setSubcity] = useState("");

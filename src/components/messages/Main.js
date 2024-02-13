@@ -15,7 +15,6 @@ import {
   Badge,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import NotificationsDisplay from "../NotificationsDisplay";
 import useMainStore from "../store/mainStore";
 
 const styles = {
@@ -40,6 +39,11 @@ const styles = {
 
 const Main = ({ isLoading, userId }) => {
   const userMessages = useMainStore((state) => state.messages);
+  const notifications = useMainStore((state) => state.notifications);
+
+  const newMessages = notifications.filter(
+    (notification) => notification.type === "message"
+  );
 
   // Sort chat rooms by the timestamp of the latest message
   userMessages.sort((a, b) => {
@@ -51,6 +55,10 @@ const Main = ({ isLoading, userId }) => {
         .seconds || 0;
     return lastMessageB - lastMessageA;
   });
+
+  if (newMessages) {
+    console.log("new messages : ", newMessages);
+  }
 
   if (isLoading) {
     return (
@@ -69,17 +77,17 @@ const Main = ({ isLoading, userId }) => {
     );
   }
 
+  const countNewMessages = (chatRoomId) => {
+    return notifications.filter(
+      (notification) =>
+        notification.type === "message" &&
+        notification.chatRoomId === chatRoomId
+    ).length;
+  };
+
   return (
     <div style={styles.root}>
-      <AppBar position="static" sx={styles.appBar}>
-        <Toolbar>
-          <Typography variant="h6" style={{ flexGrow: 1 }}>
-            Chat Rooms
-          </Typography>
-        </Toolbar>
-      </AppBar>
       <Container>
-        <NotificationsDisplay />
         <Grid container spacing={2}>
           <Grid item xs={12} lg={6}>
             <Paper sx={styles.paper}>
@@ -91,33 +99,43 @@ const Main = ({ isLoading, userId }) => {
                           chatRoom.messagesData.messages.length - 1
                         ]
                       : null;
+                  const newMessageCount = countNewMessages(chatRoom.chatRoomId);
 
                   return (
                     <React.Fragment key={chatRoom.chatRoomId}>
-                      <ListItem
-                        alignItems="flex-start"
-                        component={Link}
-                        to={`/messages/${chatRoom.chatRoomId}`}
+                      <Badge
+                        badgeContent={newMessageCount}
+                        color="error"
+                        sx={{
+                          ".MuiBadge-badge": {
+                            top: "15px",
+                            right: "0",
+                          },
+                        }}
                       >
-                        <Badge badgeContent={0} color="error">
+                        <ListItem
+                          alignItems="flex-start"
+                          component={Link}
+                          to={`/messages/${chatRoom.chatRoomId}`}
+                        >
                           <Avatar sx={styles.avatar}>
                             {/* Display an initial based on the chat room or user name */}
                             {chatRoom.messagesData.user1Id === userId
                               ? chatRoom.messagesData.user2Name[0]
                               : chatRoom.messagesData.user1Name[0]}
                           </Avatar>
-                        </Badge>
-                        <ListItemText
-                          primary={
-                            chatRoom.messagesData.user1Id === userId
-                              ? chatRoom.messagesData.user2Name
-                              : chatRoom.messagesData.user1Name
-                          }
-                          secondary={
-                            lastMessage ? lastMessage.body : "No messages yet"
-                          }
-                        />
-                      </ListItem>
+                          <ListItemText
+                            primary={
+                              chatRoom.messagesData.user1Id === userId
+                                ? chatRoom.messagesData.user2Name
+                                : chatRoom.messagesData.user1Name
+                            }
+                            secondary={
+                              lastMessage ? lastMessage.body : "No messages yet"
+                            }
+                          />
+                        </ListItem>
+                      </Badge>
                       <Divider component="li" />
                     </React.Fragment>
                   );

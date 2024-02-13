@@ -13,14 +13,14 @@ import {
 } from "@mui/material";
 import { HashLoader } from "react-spinners";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { UserAuth } from "../context/AuthContext";
-import { RoommateAuth } from "../context/RoommateContext";
+import { UserAuth } from "../../context/AuthContext";
+import { RoommateAuth } from "../../context/RoommateContext";
 import RoommateFormModal from "./RoommateFormModal";
 
 const styles = {
   container: {
     margin: "20px 0",
-    padding: "20px",
+    padding: "15px",
     backgroundColor: "#f5f5f5", // Light grey background
   },
   title: {
@@ -32,10 +32,9 @@ const styles = {
     width: "200px",
   },
   enrollButton: {
-    // Style for the enroll button
     marginTop: "20px",
-    backgroundColor: "#1976d2", // Example button color
-    color: "#fff",
+    backgroundColor: "#2D6072",
+    color: "white",
     "&:hover": {
       backgroundColor: "#1565c0",
     },
@@ -51,9 +50,8 @@ const RoommateDisplay = ({ houseData }) => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [openFormDialog, setOpenFormDialog] = useState(false);
+
   useEffect(() => {
-    // console.log(houseData.roommateData);
-    console.log(user.uid);
     // Adjusted to work with objects instead of arrays
     setIsInterested(
       Object.hasOwnProperty.call(
@@ -202,9 +200,9 @@ const RoommateDisplay = ({ houseData }) => {
               style={{ color: "white", marginRight: "8px" }}
             />
           ) : isInterested ? (
-            "Withdraw Interest"
+            "Cancel application"
           ) : (
-            "Enroll for Shared Housing"
+            "Apply"
           )}
         </Box>
       </Button>

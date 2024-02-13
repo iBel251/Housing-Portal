@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import CardsDisplay from "./CardsDisplay";
-import useMainStore from "./store/mainStore";
+import useMainStore from "../store/mainStore";
 import { Typography } from "@mui/material";
-import { useFetchAllHouses } from "./functions/houseFunctions";
+import { useFetchAllHouses } from "../functions/houseFunctions";
 
-const Exchange = ({ onClick, allHouseData }) => {
+const Roommate = ({ onClick }) => {
   const houses = useMainStore((state) => state.allHouses);
   const fetchHousesAndUpdateStore = useFetchAllHouses();
 
@@ -12,16 +12,16 @@ const Exchange = ({ onClick, allHouseData }) => {
     fetchHousesAndUpdateStore();
   }, []);
 
-  const rentalHouses = allHouseData.filter(
-    (house) => house.type === "exchange"
+  const rentalHouses = houses.filter(
+    (house) => house.type === "roommate/shared"
   );
 
   return (
     <div>
-      <Typography variant="h4">Exchange Houses</Typography>
+      <Typography variant="h4">Shared Houses</Typography>
       <CardsDisplay onHouseClick={onClick} allHouses={rentalHouses} />
     </div>
   );
 };
 
-export default Exchange;
+export default Roommate;

@@ -9,8 +9,8 @@ import {
   Box,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useToggleFavorites } from "./functions/houseFunctions";
-import useMainStore from "./store/mainStore";
+import { useToggleFavorites } from "../functions/houseFunctions";
+import useMainStore from "../store/mainStore";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
