@@ -56,9 +56,13 @@ const RoommateNotifications = () => {
       <h2>Shared Houses</h2>
       <Box sx={styles.cardsContainer}>
         {userSharedHouses.length > 0 ? (
-          userSharedHouses.map((house) => (
+          userSharedHouses.map((house, index) => (
             <div key={house.id}>
-              <HouseCard house={house} onHouseClick={onHouseClick} />
+              <HouseCard
+                house={house}
+                onHouseClick={onHouseClick}
+                houseIndex={index + 1}
+              />
             </div>
           ))
         ) : (

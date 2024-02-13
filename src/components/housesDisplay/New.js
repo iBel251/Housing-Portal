@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import CardsDisplay from "./CardsDisplay";
-import useMainStore from "./store/mainStore";
+import useMainStore from "../store/mainStore";
 import { Typography } from "@mui/material";
-import { useFetchAllHouses } from "./functions/houseFunctions";
+import { useFetchAllHouses } from "../functions/houseFunctions";
 
 const New = ({ onClick, allHouseData }) => {
   const houses = allHouseData;

@@ -52,6 +52,7 @@ export const renderHouseDetails = (house, openModal) => {
     "userId",
     "location",
     "roommateData",
+    "feedback",
   ];
   if (house.type !== "roommate/shared") {
     excludedKeys = [...excludedKeys, "peopleNeeded"];

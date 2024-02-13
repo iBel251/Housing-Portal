@@ -1,13 +1,18 @@
 // HouseDetails.js
 import React, { useEffect, useState } from "react";
 import { Paper, Typography, Grid, Box, Button } from "@mui/material";
-import useMainStore from "./store/mainStore";
+import useMainStore from "../store/mainStore";
 import { useParams, useNavigate } from "react-router-dom";
 import EmailIcon from "@mui/icons-material/Email";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ReportIcon from "@mui/icons-material/Report";
 import { HashLoader } from "react-spinners";
-import { formatTimestamp } from "./functions/houseFunctions";
-import { useStartMessage } from "./functions/chatFunctions";
+import { formatTimestamp } from "../functions/houseFunctions";
+import { useStartMessage } from "../functions/chatFunctions";
 import RoommateDisplay from "./RoommateDisplay";
+import UserFeedback from "./UserFeedback";
+import Report from "../Report";
+import { FaMapMarkedAlt } from "react-icons/fa";
 
 const styles = {
   container: {
@@ -25,16 +30,35 @@ const styles = {
   },
   backButton: {
     marginTop: "20px",
+    color: "orange",
+    borderColor: "#2D6072",
   },
   contactButton: {
+    margin: "20px 10px 0 10px",
+  },
+  reportButton: {
     marginTop: "20px",
+    backgroundColor: "#D32F2F", // Deep red background
+    color: "#FFFFFF", // White text
+    "&:hover": {
+      backgroundColor: "#C62828", // A slightly darker red on hover
+    },
+  },
+  mainBtns: {
+    color: "white",
+    height: "37px",
+    background: "#2D6072",
+    fontWeight: "bold",
+    "&:hover": {
+      backgroundColor: "#2D6069", // A slightly darker red on hover
+    },
   },
   longText: {
     whiteSpace: "pre-line", // Ensures proper rendering of newlines
   },
   mapBtn: {
     marginLeft: "15px",
-    fontSize: "10px",
+    fontSize: "14px",
   },
   roommateContainer: {
     width: "100%",
@@ -49,6 +73,7 @@ const styles = {
 const HouseDetails = () => {
   const [currentImage, setCurrentImage] = useState("pic1");
   const [isLoading, setIsLoading] = useState(false);
+  const [openReportDialog, setOpenReportDialog] = useState(false);
   const { houseId } = useParams();
 
   const houses = useMainStore((state) => state.allHouses);
@@ -62,7 +87,6 @@ const HouseDetails = () => {
     if (chatRoomId) {
       console.log("Chat Room ID:", chatRoomId);
       navigate(`/messages/${chatRoomId}`);
-      // You can navigate to the chat room or perform other actions here.
     }
   }, [chatRoomId]);
 
@@ -93,6 +117,14 @@ const HouseDetails = () => {
     setCurrentImage(imageKeys[nextIndex]);
   };
 
+  const handleOpenReportDialog = () => {
+    setOpenReportDialog(true);
+  };
+
+  const handleCloseReportDialog = () => {
+    setOpenReportDialog(false);
+  };
+
   const handleChatRequest = async () => {
     setIsLoading(true);
     await handleChat();
@@ -104,7 +136,13 @@ const HouseDetails = () => {
   }
 
   return (
-    <Paper elevation={3} style={styles.container}>
+    <Paper elevation={2} style={styles.container}>
+      <Report
+        open={openReportDialog}
+        onClose={handleCloseReportDialog}
+        houseId={houseId}
+        type={"house"}
+      />
       <img src={house[currentImage]} alt="House" style={styles.image} />
       <Button onClick={() => handleImageNavigation(-1)}>Prev</Button>
       <Button onClick={() => handleImageNavigation(1)}>Next</Button>
@@ -149,7 +187,7 @@ const HouseDetails = () => {
         <Button
           variant="contained"
           color="secondary"
-          style={styles.mapBtn}
+          sx={{ ...styles.mainBtns, ...styles.mapBtn }}
           onClick={() =>
             window.open(
               getGoogleMapsUrl(house.location.lat, house.location.lng),
@@ -157,7 +195,8 @@ const HouseDetails = () => {
             )
           }
         >
-          View location on Google Maps
+          Location
+          <FaMapMarkedAlt style={{ fontSize: "30px", marginLeft: "10px" }} />
         </Button>
       ) : (
         <Typography style={{ color: "red", marginLeft: "15px" }}>
@@ -166,19 +205,19 @@ const HouseDetails = () => {
       )}
       <Box sx={styles.btnGroup}>
         <Button
-          variant="contained"
+          variant="outlined"
           color="primary"
           style={styles.backButton}
           onClick={goBack}
         >
-          Go Back
+          <ArrowBackIcon />
         </Button>
 
         <Button
           disabled={isLoading}
-          variant="outlined"
+          variant="contained"
           onClick={handleChatRequest}
-          style={styles.contactButton}
+          sx={{ ...styles.mainBtns, ...styles.contactButton }}
         >
           {isLoading ? (
             <div>
@@ -189,6 +228,19 @@ const HouseDetails = () => {
           )}
           <EmailIcon sx={{ marginLeft: "5px", fontSize: "25px" }} />
         </Button>
+        <Button
+          disabled={isLoading}
+          variant="contained"
+          color="error"
+          onClick={handleOpenReportDialog}
+          sx={{ ...styles.mainBtns, ...styles.reportButton }}
+        >
+          Report
+          <ReportIcon sx={{ marginLeft: "5px", fontSize: "25px" }} />
+        </Button>
+      </Box>
+      <Box>
+        <UserFeedback houseId={houseId} />
       </Box>
     </Paper>
   );

@@ -12,11 +12,14 @@ import {
   Autocomplete,
   IconButton,
   TextField,
+  Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 import { HouseAuth } from "../../context/HouseContext";
 import { RoommateAuth } from "../../context/RoommateContext";
+import RegisteredPeople from "./RegisteredPeople";
 
 const RoommateDetails = ({ houseData }) => {
   // Initial state setup for roommateData
@@ -75,6 +78,14 @@ const RoommateDetails = ({ houseData }) => {
       ...prevValues,
       [type]: newValue,
     }));
+  };
+
+  const handleAddRegisteredPersonDialog = () => {
+    // Function to handle adding a new registered person via dialog
+  };
+
+  const handleDeleteRegisteredPerson = (personKey) => {
+    // Function to handle deleting a registered person
   };
 
   const AccordionSection = ({ title, itemType, suggestions }) => {
@@ -141,11 +152,8 @@ const RoommateDetails = ({ houseData }) => {
             {Object.keys(roommateData.interestedPeople).length}
           </Typography>
         </Paper>
-        <Paper elevation={3} style={{ padding: "16px" }}>
-          <Typography variant="h6">
-            Registered People:{" "}
-            {Object.keys(roommateData.registeredPeople).length}
-          </Typography>
+        <Paper elevation={3} style={{ padding: "0px" }}>
+          <RegisteredPeople houseData={houseData} />
         </Paper>
       </Grid>
       <Grid item xs={12} sm={6}>

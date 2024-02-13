@@ -17,9 +17,14 @@ const StoreInitializer = () => {
   const refetchTrigger = useMainStore((state) => state.refetchTrigger);
   const recountTrigger = useMainStore((state) => state.recountTrigger);
   const [favoriteHouseIds, setFavoriteHouseIds] = useState([]);
-  const userId = user ? user.uid : null; // Check if user exists before getting uid
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
+    setUserId(user ? user.uid : null);
+  }, [user]);
+
+  useEffect(() => {
+    console.log("refetch triggered");
     if (userId) {
       const fetchUserDataAndHouseData = async () => {
         try {
@@ -54,23 +59,21 @@ const StoreInitializer = () => {
   }, [userId, refetchTrigger]);
 
   useEffect(() => {
-    if (userId) {
-      const fetchAllHousesData = async () => {
-        try {
-          const houses = await fetchAllHouses();
-          if (houses) {
-            // Store the houses data in Zustand store
-            useMainStore.getState().setAllHouses(houses);
-          } else {
-            console.log("No houses found");
-          }
-        } catch (error) {
-          console.log("Error fetching all houses:", error);
+    const fetchAllHousesData = async () => {
+      try {
+        const houses = await fetchAllHouses();
+        if (houses) {
+          // Store the houses data in Zustand store
+          useMainStore.getState().setAllHouses(houses);
+        } else {
+          console.log("No houses found");
         }
-      };
+      } catch (error) {
+        console.log("Error fetching all houses:", error);
+      }
+    };
 
-      fetchAllHousesData();
-    }
+    fetchAllHousesData();
   }, []);
 
   useEffect(() => {

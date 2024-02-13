@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { HashLoader } from "react-spinners";
-import HousesSecondNav from "../components/HousesSecondNav";
+import HousesSecondNav from "../components/housesDisplay/HousesSecondNav";
 import { UserAuth } from "../context/AuthContext";
 import { useEffect } from "react";
 import useMainStore from "../components/store/mainStore";
-import Filter from "../components/Filter";
+import Filter from "../components/housesDisplay/Filter";
 
 function Houses() {
   const { user, logout } = UserAuth();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [filteredHouses, setFilteredHouses] = useState({});
+  const [filteredHouses, setFilteredHouses] = useState([]);
   const allHouses = useMainStore((state) => state.allHouses);
   const setActivePage = useMainStore((state) => state.setActivePage);
 
@@ -20,6 +20,9 @@ function Houses() {
   }, []);
 
   useEffect(() => {
+    if (allHouses && Object.keys(allHouses).length > 0) {
+      setFilteredHouses(allHouses);
+    }
     if (filteredHouses && filteredHouses.length === 0) {
       setFilteredHouses(allHouses);
     }

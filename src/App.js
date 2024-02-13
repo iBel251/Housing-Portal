@@ -19,14 +19,16 @@ import { NotificationProvider } from "./context/NotificationContext";
 import { AuthContextProvider } from "./context/AuthContext";
 import { HouseContextProvider } from "./context/HouseContext";
 import { ChatContextProvider } from "./context/ChatContext";
+import { RoommateContextProvider } from "./context/RoommateContext";
+import { FeedbackContextProvider } from "./context/FeedbackContext";
+import RoommateNotifications from "./components/messages/RoommateNotifications";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import StoreInitializer from "./components/StoreInitializer";
 import { useLocation } from "react-router-dom";
-import HouseDetails from "./components/HouseDetails";
+import HouseDetails from "./components/housesDisplay/HouseDetails";
 import EditHouse from "./components/profile/EditHouse";
-import { RoommateContextProvider } from "./context/RoommateContext";
 import Main from "./components/messages/Main";
-import RoommateNotifications from "./components/messages/RoommateNotifications";
+import "./styles/customstyles.css";
 
 const tele = window.Telegram.WebApp;
 const NavContent = () => {
@@ -49,67 +51,69 @@ function App() {
           <ChatContextProvider>
             <NotificationProvider>
               <RoommateContextProvider>
-                <NavContent />
-                <StoreInitializer />
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="houses" element={<Houses />} />
-                  <Route
-                    path="favorites"
-                    element={
-                      <ProtectedRoute>
-                        <Favorites />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="messages"
-                    element={
-                      <ProtectedRoute>
-                        <Messages />
-                      </ProtectedRoute>
-                    }
-                  >
-                    <Route index element={<Main />} />
+                <FeedbackContextProvider>
+                  <NavContent />
+                  <StoreInitializer />
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="houses" element={<Houses />} />
                     <Route
-                      path="/messages/notifications"
-                      element={<RoommateNotifications />}
+                      path="favorites"
+                      element={
+                        <ProtectedRoute>
+                          <Favorites />
+                        </ProtectedRoute>
+                      }
                     />
                     <Route
-                      path="/messages/:messageId"
-                      element={<MessageDetail />}
+                      path="messages"
+                      element={
+                        <ProtectedRoute>
+                          <Messages />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route index element={<Main />} />
+                      <Route
+                        path="/messages/notifications"
+                        element={<RoommateNotifications />}
+                      />
+                      <Route
+                        path="/messages/:messageId"
+                        element={<MessageDetail />}
+                      />
+                    </Route>
+                    <Route path="help" element={<Help />} />
+                    <Route path="signup" element={<Signup />} />
+                    <Route path="login" element={<Login />} />
+                    <Route
+                      path="admin"
+                      element={
+                        <ProtectedRoute adminOnly={true}>
+                          <Admin />
+                        </ProtectedRoute>
+                      }
                     />
-                  </Route>
-                  <Route path="help" element={<Help />} />
-                  <Route path="signup" element={<Signup />} />
-                  <Route path="login" element={<Login />} />
-                  <Route
-                    path="admin"
-                    element={
-                      <ProtectedRoute adminOnly={true}>
-                        <Admin />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route path="recommended" element={<Recommended />} />
-                  <Route
-                    path="profile"
-                    element={
-                      <ProtectedRoute>
-                        <Profile />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route path="logout" element={<Logout />} />
+                    <Route path="recommended" element={<Recommended />} />
+                    <Route
+                      path="profile"
+                      element={
+                        <ProtectedRoute>
+                          <Profile />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="logout" element={<Logout />} />
 
-                  {/* <Route
+                    {/* <Route
                     path="/messages/:messageId"
                     element={<MessageDetail />}
                   /> */}
-                  <Route path="/houses/:houseId" element={<HouseDetails />} />
-                  <Route path="/profile/:houseId" element={<EditHouse />} />
-                </Routes>
-                <FooterContent />
+                    <Route path="/houses/:houseId" element={<HouseDetails />} />
+                    <Route path="/profile/:houseId" element={<EditHouse />} />
+                  </Routes>
+                  <FooterContent />
+                </FeedbackContextProvider>
               </RoommateContextProvider>
             </NotificationProvider>
           </ChatContextProvider>

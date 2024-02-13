@@ -20,7 +20,7 @@ const DisplayHouses = ({ onHouseClick, houses }) => {
   if (houses.length === 0) {
     return (
       <div style={{ padding: "20px", textAlign: "center" }}>
-        <Typography variant="h6">No houses available.</Typography>
+        <Typography variant="h6">You have no registered houses.</Typography>
       </div>
     );
   }

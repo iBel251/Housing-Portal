@@ -7,10 +7,11 @@ import {
   TextField,
   MenuItem,
   Button,
+  Box,
 } from "@mui/material";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
-import "../styles/customstyles.css";
+import "../../styles/customstyles.css";
 
 const RoommateFormModal = ({ open, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -61,11 +62,11 @@ const RoommateFormModal = ({ open, onClose, onSubmit }) => {
 
   return (
     <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">
-        Enroll for Shared Housing
-      </DialogTitle>
+      <Box style={{ textAlign: "center", margin: "5px 0 0", pading: "0px" }}>
+        Details of person joining the house.
+      </Box>
       <form onSubmit={handleSubmit}>
-        <DialogContent>
+        <DialogContent style={{ margin: "0px", padding: "0px 15px" }}>
           <TextField
             autoFocus
             margin="dense"

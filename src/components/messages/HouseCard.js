@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Card as MuiCard,
   CardMedia,
@@ -40,10 +40,35 @@ const styles = {
     background: "white",
     borderTopRightRadius: "3px",
   },
+  houseTag: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    borderBottomRightRadius: "10px",
+    background: "orange",
+    width: "fit-content",
+    padding: "3px",
+  },
 };
 
-const HouseCard = ({ house, onHouseClick }) => {
+const HouseCard = ({ house, onHouseClick, houseIndex }) => {
   const storedUserData = useMainStore((state) => state.userData);
+  let notifications = useMainStore((state) => state.notifications);
+
+  notifications = notifications.filter(
+    (notification) => notification.houseId === house.id
+  );
+  const enrollmentCount = notifications.filter(
+    (notification) => notification.type === "enrollment"
+  ).length;
+  const unseenEnrollmentCount = notifications.filter(
+    (notification) =>
+      notification.type === "enrollment" && notification.status === "unseen"
+  ).length;
+  const removedEnrollmentCount = notifications.filter(
+    (notification) =>
+      notification.type === "enrollment" && notification.status === "removed"
+  ).length;
 
   const handleClick = () => {
     onHouseClick(house.id);
@@ -62,27 +87,36 @@ const HouseCard = ({ house, onHouseClick }) => {
             alt={house.subcity}
           />
           <CardContent>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Typography variant="body2" color="text.secondary">
-                  <span style={styles.infoLabel}>Subcity:</span>
-                  <span style={styles.infoValue}>{house.subcity}</span>
+            <Box sx={styles.houseTag}>House {houseIndex}</Box>
+            {removedEnrollmentCount > 0 ? (
+              <Typography style={{ fontSize: "14px" }}>
+                Removed applications : {removedEnrollmentCount}
+              </Typography>
+            ) : null}
+            {unseenEnrollmentCount > 0 ? (
+              <>
+                <Typography style={{ fontSize: "14px" }}>
+                  New applications :{" "}
+                  <span
+                    style={{
+                      color: "white",
+                      background: "red",
+                      padding: "3px 6px",
+                      borderRadius: "50%",
+                    }}
+                  >
+                    {unseenEnrollmentCount}
+                  </span>
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  <span style={styles.infoLabel}>Rooms:</span>
-                  <span style={styles.infoValue}>{house.rooms}</span>
+                <Typography style={{ fontSize: "14px" }}>
+                  Total applications : {enrollmentCount}{" "}
                 </Typography>
-
-                <Typography variant="body2" color="text.secondary">
-                  <span style={styles.infoLabel}>Price:</span>
-                  <span style={styles.infoValue}>{house.price} Birr</span>
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  <span style={styles.infoLabel}>Bathrooms:</span>
-                  <span style={styles.infoValue}>{house.bathroom}</span>
-                </Typography>
-              </Grid>
-            </Grid>
+              </>
+            ) : (
+              <Typography style={{ fontSize: "14px" }}>
+                Total applications : {enrollmentCount}{" "}
+              </Typography>
+            )}
           </CardContent>
         </MuiCard>
       </Box>

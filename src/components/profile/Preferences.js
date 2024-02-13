@@ -113,10 +113,14 @@ const Preferences = ({ userData }) => {
             </Box>
           ))
         ) : (
-          <Typography variant="subtitle1">No preferences available.</Typography>
+          <Typography variant="subtitle1">No data available.</Typography>
         )}
       </Box>
-      <Button variant="contained" color="primary" onClick={handleModalOpen}>
+      <Button
+        variant="contained"
+        onClick={handleModalOpen}
+        style={{ background: "#2D6072" }}
+      >
         Add Preferences
       </Button>
       <PreferencesModal
