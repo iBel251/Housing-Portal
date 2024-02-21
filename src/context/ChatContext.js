@@ -71,6 +71,7 @@ export const ChatContextProvider = ({ children }) => {
           messages: [],
           user1Name,
           user2Name,
+          blockStatus: { user1Id: false, user2Id: false },
         });
         chatRoomId = chatRoomDocRef.id;
       }

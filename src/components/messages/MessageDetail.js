@@ -101,25 +101,25 @@ function MessageDetail({ chatRoomId }) {
     };
   }
 
-  useEffect(() => {
-    // Assuming you have access to a method to check if the user is blocked
-    // and userData includes a list of blocked user IDs
-    const checkIfBlocked = async () => {
-      const otherUserId =
-        messageData.user1Id === user.uid
-          ? messageData.user2Id
-          : messageData.user1Id;
-      if (messageData.blockStatus.otherUserId === true) {
-        setIsBlocked(true);
-      } else {
-        setIsBlocked(false);
-      }
-    };
+  // useEffect(() => {
+  //   // Assuming you have access to a method to check if the user is blocked
+  //   // and userData includes a list of blocked user IDs
+  //   const checkIfBlocked = async () => {
+  //     const otherUserId =
+  //       messageData.user1Id === user.uid
+  //         ? messageData.user2Id
+  //         : messageData.user1Id;
+  //     if (messageData.blockStatus.otherUserId === true) {
+  //       setIsBlocked(true);
+  //     } else {
+  //       setIsBlocked(false);
+  //     }
+  //   };
 
-    if (messageData) {
-      checkIfBlocked();
-    }
-  }, [messageData, userData.blockedList, user.uid]);
+  //   if (messageData) {
+  //     checkIfBlocked();
+  //   }
+  // }, [messageData, userData.blockedList, user.uid]);
 
   useEffect(() => {
     // Set the active chat room when the component mounts
@@ -131,15 +131,29 @@ function MessageDetail({ chatRoomId }) {
     };
   }, [messageId]);
 
+  // useEffect(() => {
+  //   if (messageData?.blockStatus?.[user.uid] === true) {
+  //     setBlockedStatus(true);
+  //   } else {
+  //     setBlockedStatus(false);
+  //   }
+  //   console.log("you are blocked set to : ", blockedStatus);
+  // }, [messageData]);
   useEffect(() => {
-    if (messageData?.blockStatus?.[user.uid] === true) {
-      setBlockedStatus(true);
-    } else {
-      setBlockedStatus(false);
-    }
-    console.log("you are blocked set to : ", blockedStatus);
-  }, [messageData]);
+    if (messageData) {
+      const currentUserId = user.uid;
+      const otherUserId =
+        messageData.user1Id === currentUserId
+          ? messageData.user2Id
+          : messageData.user1Id;
 
+      // Check if the current user is blocked by the other user
+      setIsBlocked(messageData.blockStatus[otherUserId] === true);
+
+      // Check if the other user is blocked by the current user
+      setBlockedStatus(messageData.blockStatus[currentUserId] === true);
+    }
+  }, [messageData, user.uid]);
   useEffect(() => {
     let unsubscribe;
 

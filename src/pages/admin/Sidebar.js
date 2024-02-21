@@ -10,8 +10,10 @@ import {
   BsFillGearFill,
 } from "react-icons/bs";
 import { GrUserAdmin } from "react-icons/gr";
+import useMainStore from "../../components/store/mainStore";
 
 function Sidebar({ openSidebarToggle, OpenSidebar, changeActiveComponent }) {
+  const { activeLink } = useMainStore();
   return (
     <aside
       id="sidebar"
@@ -28,7 +30,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar, changeActiveComponent }) {
 
       <ul className="sidebar-list">
         <li
-          className="sidebar-list-item"
+          className={`sidebar-list-item ${
+            activeLink === "Dashboard" ? "active" : ""
+          }`}
           onClick={() => {
             changeActiveComponent("Dashboard");
           }}
@@ -38,7 +42,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar, changeActiveComponent }) {
           </a>
         </li>
         <li
-          className="sidebar-list-item"
+          className={`sidebar-list-item ${
+            activeLink === "Users" ? "active" : ""
+          }`}
           onClick={() => {
             changeActiveComponent("Users");
           }}
@@ -48,7 +54,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar, changeActiveComponent }) {
           </a>
         </li>
         <li
-          className="sidebar-list-item"
+          className={`sidebar-list-item ${
+            activeLink === "Houses" ? "active" : ""
+          }`}
           onClick={() => {
             changeActiveComponent("Houses");
           }}
@@ -58,7 +66,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar, changeActiveComponent }) {
           </a>
         </li>
         <li
-          className="sidebar-list-item"
+          className={`sidebar-list-item ${
+            activeLink === "Chats" ? "active" : ""
+          }`}
           onClick={() => {
             changeActiveComponent("Chats");
           }}
@@ -68,7 +78,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar, changeActiveComponent }) {
           </a>
         </li>
         <li
-          className="sidebar-list-item"
+          className={`sidebar-list-item ${
+            activeLink === "Reports" ? "active" : ""
+          }`}
           onClick={() => {
             changeActiveComponent("Reports");
           }}
@@ -78,7 +90,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar, changeActiveComponent }) {
           </a>
         </li>
         <li
-          className="sidebar-list-item"
+          className={`sidebar-list-item ${
+            activeLink === "Settings" ? "active" : ""
+          }`}
           onClick={() => {
             changeActiveComponent("Settings");
           }}

@@ -3,6 +3,11 @@ body {
     padding: 0;
     font-family: 'Montserrat', sans-serif;
 }
+
+span {
+    color:orange;
+    font-weight: bold;
+}
   
 .icon {
     vertical-align: middle;
@@ -97,6 +102,14 @@ body {
     background-color: rgba(255, 255, 255, 0.2);
     cursor: pointer;
 }
+.sidebar-list-item.active {
+    background-color: orange;
+    cursor: pointer;
+    color: #183641;
+}
+.sidebar-list-item.active * {
+    color: #183641;
+}
 
 .sidebar-list-item > a {
     text-decoration: none;
@@ -106,11 +119,6 @@ body {
 .sidebar-responsive {
     display: inline !important;
     position: absolute;
-    /*
-      we want the z-index of the sidebar higher so that
-      the charts are not showing over the sidebar 
-      on small screens
-    */
     z-index: 12 !important;
 }
   
