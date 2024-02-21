@@ -13,7 +13,6 @@ import HouseDetail from "./HouseDetail"; // Replace with your actual HouseDetail
 
 const styles = {
   paper: {
-    width: "95%",
     overflow: "auto",
   },
   table: {
@@ -45,13 +44,14 @@ const HousesTable = ({ houses }) => {
     <Box
       style={{
         display: "grid",
-        gridTemplateColumns: "2fr 2fr",
+        gridTemplateColumns: { xs: "1fr", md: "3fr 2fr" },
+        gap: 2,
         alignItems: "start",
       }}
     >
       <Paper elevation={3} sx={styles.paper}>
         <Table sx={styles.table}>
-          <TableHead>
+          <TableHead sx={{ background: "orange" }}>
             <TableRow>
               <TableCell>ID</TableCell>
               <TableCell>Address</TableCell>
@@ -81,8 +81,8 @@ const HousesTable = ({ houses }) => {
             ))}
           </TableBody>
         </Table>
-        {openHouseDetails && <HouseDetail house={selectedHouse} />}
       </Paper>
+      {openHouseDetails && <HouseDetail houseId={selectedHouse.id} />}
     </Box>
   );
 };

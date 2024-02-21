@@ -8,6 +8,7 @@ import {
   reauthenticateWithCredential,
   EmailAuthProvider,
   sendEmailVerification,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { auth, db } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
@@ -112,9 +113,12 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
-  const editUserData = async (key, value) => {
+  const editUserData = async (key, value, userId) => {
+    if (!userId) {
+      userId = user.uid;
+    }
     try {
-      if (!user || !user.uid) {
+      if (!user || !userId) {
         throw new Error("User is not authenticated");
       }
 
@@ -123,7 +127,7 @@ export const AuthContextProvider = ({ children }) => {
         throw new Error("Key is required for editing");
       }
 
-      const userDocRef = doc(db, "users", user.uid);
+      const userDocRef = doc(db, "users", userId);
 
       // Update the specific field in the Firestore document
       await updateDoc(userDocRef, {
@@ -249,7 +253,7 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
-  const changePassword = async (oldPassword, newPassword) => {
+  const changePassword = async (oldPassword, newPassword, userId) => {
     if (!user) {
       throw new Error("No user is currently signed in");
     }
@@ -267,6 +271,16 @@ export const AuthContextProvider = ({ children }) => {
     } catch (error) {
       console.error("Error updating password:", error);
       throw error;
+    }
+  };
+
+  const sendResetEmail = async (email) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      console.log("Password reset email sent successfully.");
+    } catch (error) {
+      console.error("Error sending password reset email:", error);
+      throw error; // Propagate the error
     }
   };
 
@@ -371,6 +385,7 @@ export const AuthContextProvider = ({ children }) => {
         editUserPreference,
         deleteUserPreference,
         changePassword,
+        sendResetEmail,
         countUsers,
         searchUsers,
         addRestriction,

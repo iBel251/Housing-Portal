@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextField,
   Button,
@@ -12,8 +12,10 @@ import { HashLoader } from "react-spinners";
 import CircularProgress from "@mui/material/CircularProgress";
 import { UserAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import useMainStore from "../components/store/mainStore";
 
 function Login() {
+  const setActivePage = useMainStore((state) => state.setActivePage);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -23,7 +25,11 @@ function Login() {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
-  const { signIn } = UserAuth();
+  const { signIn, sendResetEmail } = UserAuth();
+
+  useEffect(() => {
+    setActivePage("login");
+  }, []);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -31,6 +37,23 @@ function Login() {
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleForgotPassword = async () => {
+    const email = prompt("Please enter your email address:");
+    if (email) {
+      try {
+        await sendResetEmail(email);
+        alert(
+          "A password reset link is sent to " +
+            email +
+            ". Please make sure this the the correct email."
+        );
+      } catch (error) {
+        console.error("Failed to send password reset email:", error);
+        alert("An error occurred. Please try again later.");
+      }
+    }
   };
 
   const handleCheckboxChange = (event) => {
@@ -159,6 +182,9 @@ function Login() {
             </Button>
           </Grid>
           <Grid item xs={12}>
+            <Button color="primary" onClick={handleForgotPassword}>
+              Forgot Password?
+            </Button>
             <Typography variant="body2" align="center">
               Don't have an account?{" "}
               <Button onClick={() => navigate("/signup")}>Register</Button>

@@ -23,6 +23,7 @@ import { UserAuth } from "../../context/AuthContext";
 import { ChatAuth } from "../../context/ChatContext";
 import { HouseAuth } from "../../context/HouseContext";
 import { useEffect, useState } from "react";
+import useMainStore from "../../components/store/mainStore";
 
 function Dashboard() {
   const { countUsers } = UserAuth();

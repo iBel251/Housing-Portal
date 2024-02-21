@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import HousesTable from "./HousesTable";
 import { Box, TextField } from "@mui/material";
-import { HouseAuth } from "../../context/HouseContext";
+import useMainStore from "../../components/store/mainStore"; // Adjust the import path to your store location
 
 const styles = {
   container: {
@@ -15,38 +15,35 @@ const styles = {
 };
 
 const Houses = () => {
-  const { searchHouses } = HouseAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const allHouses = useMainStore((state) => state.allHouses); // Assume allHouses is available in your store
 
   useEffect(() => {
     if (searchTerm.trim() !== "") {
-      const search = async () => {
-        try {
-          const results = await searchHouses(searchTerm);
-          setSearchResults(results);
-        } catch (error) {
-          console.error("Error occurred while searching: ", error);
-        }
-      };
-
-      search();
+      // Filter houses based on search term matching the id, owner, or suburb
+      const results = allHouses.filter(
+        (house) =>
+          house.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          house.owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          house.subcity.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setSearchResults(results);
     } else {
-      setSearchResults([]);
+      setSearchResults(allHouses); // Show all houses if there's no search term
     }
-  }, [searchTerm, searchHouses]);
+  }, [searchTerm, allHouses]);
 
   return (
     <Box sx={styles.container}>
       <Box>
         <TextField
-          label="Search by House ID" // Adjust the label to suit your needs
+          label="Search by House ID, Owner, or Suburb"
           variant="outlined"
           onChange={(e) => setSearchTerm(e.target.value)}
           sx={styles.textField}
         />
-        <HousesTable houses={searchResults} />{" "}
-        {/* Make sure to pass the appropriate prop */}
+        <HousesTable houses={searchResults} />
       </Box>
     </Box>
   );

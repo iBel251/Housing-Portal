@@ -16,7 +16,6 @@ import UserDetail from "./UserDetail";
 
 const styles = {
   paper: {
-    width: "95%",
     overflow: "auto",
   },
   table: {
@@ -35,31 +34,32 @@ const styles = {
 
 const UsersTable = ({ users }) => {
   const [openUserDetails, setOpenUserDetails] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
   const [activeCell, setActiveCell] = useState(null);
 
   const handleEditClick = (user, id) => {
-    setSelectedUser(user);
+    setSelectedUserId(id);
     setOpenUserDetails(true);
     setActiveCell(id);
   };
 
   return (
     <Box
-      style={{
+      sx={{
         display: "grid",
-        gridTemplateColumns: "2fr 1fr",
+        gridTemplateColumns: { xs: "1fr", md: "3fr 2fr" },
         alignItems: "start",
+        gap: 1,
       }}
     >
       <Paper elevation={3} sx={styles.paper}>
         <Table sx={styles.table}>
-          <TableHead>
+          <TableHead sx={{ background: "orange" }}>
             <TableRow>
               <TableCell>ID</TableCell>
               <TableCell>First Name</TableCell>
               <TableCell>Last Name</TableCell>
-              <TableCell>House ID</TableCell>
+              <TableCell>Email</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -78,8 +78,8 @@ const UsersTable = ({ users }) => {
                 <TableCell>{user.firstName}</TableCell>
                 <TableCell>{user.lastName}</TableCell>
                 <TableCell>
-                  <Tooltip title={user.houseId} arrow>
-                    <div style={styles.cell}>{user.houseId}</div>
+                  <Tooltip title={user.email} arrow>
+                    <div style={styles.cell}>{user.email}</div>
                   </Tooltip>
                 </TableCell>
               </TableRow>
@@ -87,7 +87,7 @@ const UsersTable = ({ users }) => {
           </TableBody>
         </Table>
       </Paper>
-      {openUserDetails && <UserDetail user={selectedUser} />}
+      {openUserDetails && <UserDetail userId={selectedUserId} />}
     </Box>
   );
 };

@@ -15,6 +15,8 @@ const useMainStore = create(
       refetchMessagesTrigger: false,
       unreadMessageCount: 0,
       allHouses: [],
+      allUsers: null,
+      adminData: null,
       last: null,
       activeLink: "home",
       activePage: null,
@@ -36,9 +38,26 @@ const useMainStore = create(
         })),
       setUnreadMessageCount: (count) => set({ unreadMessageCount: count }),
       setAllHouses: (houses) => set({ allHouses: houses }),
+      setAllUsers: (users) => set({ allUsers: users }),
+      setAdminData: (data) => set({ adminData: data }),
       setActiveLink: (link) => set({ activeLink: link }),
       setActivePage: (page) => set({ activePage: page }),
       setActiveChatRoomId: (id) => set({ activeChatRoomId: id }),
+
+      // function to update user status
+      updateUserStatus: (userId, newStatus) =>
+        set((state) => ({
+          allUsers: state.allUsers.map((user) =>
+            user.id === userId ? { ...user, status: newStatus } : user
+          ),
+        })),
+      // function to update house status
+      updateHouseStatus: (houseId, newStatus) =>
+        set((state) => ({
+          allHouses: state.allHouses.map((house) =>
+            house.id === houseId ? { ...house, status: newStatus } : house
+          ),
+        })),
     }),
     "MainStore"
   )

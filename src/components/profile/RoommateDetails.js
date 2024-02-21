@@ -53,7 +53,7 @@ const RoommateDetails = ({ houseData }) => {
     if (value && !roommateData[itemType].includes(value)) {
       const updatedItems = [...roommateData[itemType], value];
       const updatedRoommateData = { ...roommateData, [itemType]: updatedItems };
-
+      console.log("handling add");
       // Update state locally for immediate UI feedback
       setRoommateData(updatedRoommateData);
 

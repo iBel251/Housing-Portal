@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./admin.css";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -9,10 +9,33 @@ import Reports from "./Reports";
 import Dashboard from "./Dashboard";
 import Sidebar from "./Sidebar";
 import { useState } from "react";
+import { AdminAuth } from "../../context/AdminContext";
+import useMainStore from "../../components/store/mainStore";
 
 const Admin = () => {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
   const [activeComponent, setActiveComponent] = useState("Dashboard");
+  const { fetchAllUsers, fetchAdminData } = AdminAuth();
+  const setAllUsers = useMainStore((state) => state.setAllUsers);
+  const setAdminData = useMainStore((state) => state.setAdminData);
+  const { setActiveLink } = useMainStore();
+
+  useEffect(() => {
+    setActiveLink(activeComponent);
+  }, [activeComponent]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const users = await fetchAllUsers();
+      setAllUsers(users); // Store the users in the Zustand store
+      console.log("All Users:", users); // Log fetched users
+
+      const adminData = await fetchAdminData();
+      setAdminData(adminData); // Store the admin data in the Zustand store
+      console.log("Admin Data:", adminData); // Log fetched admin data
+    };
+
+    fetchData();
+  }, [fetchAllUsers, fetchAdminData, setAllUsers, setAdminData]);
 
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);

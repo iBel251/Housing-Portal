@@ -78,11 +78,17 @@ export const renderHouseDetails = (house, openModal) => {
               ? formatTimestamp(house[key])
               : house[key]}
           </Typography>
-          {key !== "timestamp" && key !== "type" && key !== "owner" && (
-            <IconButton size="small" onClick={() => openModal(key, house[key])}>
-              <EditIcon fontSize="small" />
-            </IconButton>
-          )}
+          {key !== "timestamp" &&
+            key !== "type" &&
+            key !== "owner" &&
+            key !== "status" && (
+              <IconButton
+                size="small"
+                onClick={() => openModal(key, house[key])}
+              >
+                <EditIcon fontSize="small" />
+              </IconButton>
+            )}
         </div>
       </Grid>
     ));
