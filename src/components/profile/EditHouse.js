@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Paper, Typography, Box, Button } from "@mui/material";
 import useMainStore from "../store/mainStore";
 import { useFetchAllHouses } from "../functions/houseFunctions";
@@ -97,6 +97,15 @@ const EditHouse = ({ houseId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editFieldName, setEditFieldName] = useState("");
   const [editedValue, setEditedValue] = useState("");
+  const [banType, setBanType] = useState("none");
+
+  useEffect(() => {
+    if (house?.status === "blocked") {
+      setBanType("blocked");
+    } else if (house?.status === "unlisted") {
+      setBanType("unlisted");
+    }
+  }, []);
 
   const openModal = (fieldName, initialValue) => {
     setEditFieldName(fieldName);
@@ -164,124 +173,199 @@ const EditHouse = ({ houseId }) => {
 
   return (
     <Box>
-      <Paper elevation={3} style={styles.container}>
-        <Button
-          variant="contained"
-          style={{ backgroundColor: "#FF0000", marginTop: "20px" }}
-          onClick={() =>
-            handleDeleteHouse(houseId, house.userId, deleteHouse, setActiveLink)
-          }
-        >
-          Delete House
-        </Button>
-        <Box sx={styles.imageContainer}>
-          {images.map((img, index) => {
-            const picKey = `pic${index + 1}`;
-            return (
-              <Box key={picKey} style={styles.imageBox}>
-                {img ? (
-                  <img src={img} alt={picKey} style={styles.image} />
-                ) : (
-                  <Typography style={{ ...styles.image, ...styles.emptyImage }}>
-                    Image {index + 1} is empty
-                  </Typography>
-                )}
-                <input
-                  id={`file-input-${picKey}`}
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => onImageChange(picKey, e.target.files[0])}
-                  style={styles.fileInput}
-                />
-                <label
-                  htmlFor={`file-input-${picKey}`}
-                  style={styles.uploadButton}
-                  onClick={(e) => handleFileButtonClick(e, picKey)}
-                >
-                  Upload Image
-                </label>
-                {selectedFileNames[picKey] && (
-                  <Typography style={styles.fileName}>
-                    {selectedFileNames[picKey]}
-                  </Typography>
-                )}
-              </Box>
-            );
-          })}
-        </Box>
-
-        <Button
-          variant="contained"
-          style={styles.saveAllButton}
-          onClick={onSaveAllImages}
-          disabled={!isAnyImageSelected || isLoading}
-        >
-          {isLoading ? (
-            <Box display="flex" alignItems="center">
-              <HashLoader size={20} color="#FFF" />
-              <Typography
-                variant="body2"
-                style={{ marginLeft: 10, color: "white" }}
-              >
-                Uploading...
+      {banType === "blocked" ? (
+        <>
+          <Typography variant="h5">This house Is Currently Blocked</Typography>
+          <Typography variant="body2">
+            Due to major violations of our safty policy this house is fully
+            banned from service.
+            <br />
+            If similar violations occur again we will be forced to terminate
+            this account.
+            <br />
+            If you think this is a mistake please contact{" "}
+            <a
+              href="mailto:support@example.com"
+              style={{ textDecoration: "none" }}
+            >
+              support@example.com
+            </a>
+          </Typography>
+          <Button
+            variant="contained"
+            style={{
+              backgroundColor: "#FF0000",
+              marginTop: "40px",
+              fontWeight: "bold",
+            }}
+            onClick={() =>
+              handleDeleteHouse(
+                houseId,
+                house.userId,
+                deleteHouse,
+                setActiveLink
+              )
+            }
+          >
+            Delete House
+          </Button>
+        </>
+      ) : (
+        <Box>
+          {banType === "unlisted" ? (
+            <>
+              <Typography variant="h5">
+                This house Is Currently Unlisted
               </Typography>
+              <Typography variant="body2">
+                Due to some issues with your house details, it's currently not
+                visible to others.
+                <br /> Please review and update your listing or contact{" "}
+                <a
+                  href="mailto:support@example.com"
+                  style={{ textDecoration: "none" }}
+                >
+                  support@example.com
+                </a>{" "}
+                for assistance.
+              </Typography>
+            </>
+          ) : null}
+          <Paper elevation={3} style={styles.container}>
+            <Button
+              variant="contained"
+              style={{
+                backgroundColor: "#FF0000",
+                marginBottom: "20px",
+                fontWeight: "bold",
+              }}
+              onClick={() =>
+                handleDeleteHouse(
+                  houseId,
+                  house.userId,
+                  deleteHouse,
+                  setActiveLink
+                )
+              }
+            >
+              Delete
+            </Button>
+            <Box>
+              <Box sx={styles.imageContainer}>
+                {images.map((img, index) => {
+                  const picKey = `pic${index + 1}`;
+                  return (
+                    <Box key={picKey} style={styles.imageBox}>
+                      {img ? (
+                        <img src={img} alt={picKey} style={styles.image} />
+                      ) : (
+                        <Typography
+                          style={{ ...styles.image, ...styles.emptyImage }}
+                        >
+                          Image {index + 1} is empty
+                        </Typography>
+                      )}
+                      <input
+                        id={`file-input-${picKey}`}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) =>
+                          onImageChange(picKey, e.target.files[0])
+                        }
+                        style={styles.fileInput}
+                      />
+                      <label
+                        htmlFor={`file-input-${picKey}`}
+                        style={styles.uploadButton}
+                        onClick={(e) => handleFileButtonClick(e, picKey)}
+                      >
+                        Upload Image
+                      </label>
+                      {selectedFileNames[picKey] && (
+                        <Typography style={styles.fileName}>
+                          {selectedFileNames[picKey]}
+                        </Typography>
+                      )}
+                    </Box>
+                  );
+                })}
+              </Box>
+
+              <Button
+                variant="contained"
+                style={styles.saveAllButton}
+                onClick={onSaveAllImages}
+                disabled={!isAnyImageSelected || isLoading}
+              >
+                {isLoading ? (
+                  <Box display="flex" alignItems="center">
+                    <HashLoader size={20} color="#FFF" />
+                    <Typography
+                      variant="body2"
+                      style={{ marginLeft: 10, color: "white" }}
+                    >
+                      Uploading...
+                    </Typography>
+                  </Box>
+                ) : (
+                  "Save Images"
+                )}
+              </Button>
+
+              <Box style={styles.detailItem}>
+                <Typography variant="h5">{house.owner}'s House</Typography>
+              </Box>
+
+              {renderHouseDetails(house, openModal)}
+
+              <FieldEditModal
+                isOpen={isModalOpen}
+                onClose={closeModal}
+                fieldName={editFieldName}
+                houseData={house}
+                onSave={onSaveField}
+                value={house[editFieldName]}
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
+              />
             </Box>
-          ) : (
-            "Save Images"
-          )}
-        </Button>
-
-        <Box style={styles.detailItem}>
-          <Typography variant="h5">{house.owner}'s House</Typography>
+          </Paper>
+          <Box style={{ marginTop: "20px" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => redirectToGoogleMaps(house)}
+              style={{ marginTop: "20px" }}
+              disabled={!house?.location?.lat || !house?.location?.lng}
+            >
+              Open in Google Maps
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() =>
+                handleGetCurrentLocation(
+                  houseId,
+                  handleHouseFieldChange,
+                  fetchHousesAndUpdateStore
+                )
+              }
+              style={{ marginTop: "20px" }}
+            >
+              {house?.location?.lat && house?.location?.lng
+                ? "Update Location"
+                : "Set Current Location"}
+            </Button>
+            <Typography variant="h6">House Location on Map</Typography>
+            {renderMapDisplay(house)}
+          </Box>
+          <Box>
+            {house?.feedback ? (
+              <FeedbackDisplay feedbackData={house.feedback} />
+            ) : null}
+          </Box>
         </Box>
-
-        {renderHouseDetails(house, openModal)}
-
-        <FieldEditModal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          fieldName={editFieldName}
-          houseData={house}
-          onSave={onSaveField}
-          value={house[editFieldName]}
-          isLoading={isLoading}
-          setIsLoading={setIsLoading}
-        />
-      </Paper>
-      <Box style={{ marginTop: "20px" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => redirectToGoogleMaps(house)}
-          style={{ marginTop: "20px" }}
-          disabled={!house?.location?.lat || !house?.location?.lng}
-        >
-          Open in Google Maps
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() =>
-            handleGetCurrentLocation(
-              houseId,
-              handleHouseFieldChange,
-              fetchHousesAndUpdateStore
-            )
-          }
-          style={{ marginTop: "20px" }}
-        >
-          {house?.location?.lat && house?.location?.lng
-            ? "Update Location"
-            : "Set Current Location"}
-        </Button>
-        <Typography variant="h6">House Location on Map</Typography>
-        {renderMapDisplay(house)}
-      </Box>
-      <Box>
-        {house?.feedback ? (
-          <FeedbackDisplay feedbackData={house.feedback} />
-        ) : null}
-      </Box>
+      )}
     </Box>
   );
 };

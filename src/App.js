@@ -30,6 +30,7 @@ import Main from "./components/messages/Main";
 import "./styles/customstyles.css";
 import AdminContextProvider from "./context/AdminContext";
 import PasswordResetPage from "./pages/PasswordResetPage";
+import BlockedUserPage from "./pages/BlockedUserPage";
 
 const tele = window.Telegram.WebApp;
 const NavContent = () => {
@@ -58,11 +59,22 @@ function App() {
                     <StoreInitializer />
                     <Routes>
                       <Route
+                        path="/user_blocked"
+                        element={<BlockedUserPage />}
+                      />
+                      <Route
                         path="/password-reset"
                         element={<PasswordResetPage />}
                       />
                       <Route path="/" element={<Index />} />
-                      <Route path="houses" element={<Houses />} />
+                      <Route
+                        path="houses"
+                        element={
+                          <ProtectedRoute>
+                            <Houses />
+                          </ProtectedRoute>
+                        }
+                      />
                       <Route
                         path="favorites"
                         element={
@@ -82,14 +94,25 @@ function App() {
                         <Route index element={<Main />} />
                         <Route
                           path="/messages/notifications"
-                          element={<RoommateNotifications />}
+                          element={
+                            <ProtectedRoute>
+                              <RoommateNotifications />
+                            </ProtectedRoute>
+                          }
                         />
                         <Route
                           path="/messages/:messageId"
                           element={<MessageDetail />}
                         />
                       </Route>
-                      <Route path="help" element={<Help />} />
+                      <Route
+                        path="help"
+                        element={
+                          <ProtectedRoute>
+                            <Help />
+                          </ProtectedRoute>
+                        }
+                      />
                       <Route path="signup" element={<Signup />} />
                       <Route path="login" element={<Login />} />
                       <Route
@@ -100,7 +123,14 @@ function App() {
                           </ProtectedRoute>
                         }
                       />
-                      <Route path="recommended" element={<Recommended />} />
+                      <Route
+                        path="recommended"
+                        element={
+                          <ProtectedRoute>
+                            <Recommended />
+                          </ProtectedRoute>
+                        }
+                      />
                       <Route
                         path="profile"
                         element={

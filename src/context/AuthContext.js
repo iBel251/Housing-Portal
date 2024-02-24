@@ -31,9 +31,12 @@ export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState({});
   const userData = useMainStore((state) => state.userData);
   const setUserData = useMainStore((state) => state.setUserData);
+  const { setUserStatus } = useMainStore();
 
   const navigate = useNavigate();
-
+  useEffect(() => {
+    setUserStatus(userData?.status || "active");
+  }, [userData]);
   const createUser = async (
     email,
     password,

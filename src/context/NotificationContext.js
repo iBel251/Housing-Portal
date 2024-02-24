@@ -50,7 +50,6 @@ export const NotificationProvider = ({ children }) => {
         try {
           const messages = await getAllUserMessages(user.uid);
           setMessages(messages); // Update Zustand store with fetched messages
-          console.log("messages stored :", messages);
         } catch (error) {
           console.error("Error fetching user messages:", error);
         }

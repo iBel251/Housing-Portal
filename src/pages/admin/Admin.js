@@ -35,7 +35,7 @@ const Admin = () => {
     };
 
     fetchData();
-  }, [fetchAllUsers, fetchAdminData, setAllUsers, setAdminData]);
+  }, []);
 
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);

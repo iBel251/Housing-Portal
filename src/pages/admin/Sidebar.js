@@ -65,7 +65,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar, changeActiveComponent }) {
             <BsFillArchiveFill className="icon" /> Houses
           </a>
         </li>
-        <li
+        {/* <li
           className={`sidebar-list-item ${
             activeLink === "Chats" ? "active" : ""
           }`}
@@ -76,7 +76,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar, changeActiveComponent }) {
           <a>
             <BsListCheck className="icon" /> Chat Room
           </a>
-        </li>
+        </li> */}
         <li
           className={`sidebar-list-item ${
             activeLink === "Reports" ? "active" : ""

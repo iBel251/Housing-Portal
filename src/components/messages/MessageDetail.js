@@ -86,6 +86,7 @@ function MessageDetail({ chatRoomId }) {
   const toggleRecount = useMainStore((state) => state.toggleRecount);
   const refetchMessages = useMainStore((state) => state.toggleMessagesRefetch);
   const notifications = useMainStore((state) => state.notifications);
+  const { userStatus } = useMainStore();
 
   const setActiveChatRoomId = useMainStore(
     (state) => state.setActiveChatRoomId
@@ -101,26 +102,6 @@ function MessageDetail({ chatRoomId }) {
     };
   }
 
-  // useEffect(() => {
-  //   // Assuming you have access to a method to check if the user is blocked
-  //   // and userData includes a list of blocked user IDs
-  //   const checkIfBlocked = async () => {
-  //     const otherUserId =
-  //       messageData.user1Id === user.uid
-  //         ? messageData.user2Id
-  //         : messageData.user1Id;
-  //     if (messageData.blockStatus.otherUserId === true) {
-  //       setIsBlocked(true);
-  //     } else {
-  //       setIsBlocked(false);
-  //     }
-  //   };
-
-  //   if (messageData) {
-  //     checkIfBlocked();
-  //   }
-  // }, [messageData, userData.blockedList, user.uid]);
-
   useEffect(() => {
     // Set the active chat room when the component mounts
     setActiveChatRoomId(messageId);
@@ -131,14 +112,6 @@ function MessageDetail({ chatRoomId }) {
     };
   }, [messageId]);
 
-  // useEffect(() => {
-  //   if (messageData?.blockStatus?.[user.uid] === true) {
-  //     setBlockedStatus(true);
-  //   } else {
-  //     setBlockedStatus(false);
-  //   }
-  //   console.log("you are blocked set to : ", blockedStatus);
-  // }, [messageData]);
   useEffect(() => {
     if (messageData) {
       const currentUserId = user.uid;
@@ -402,8 +375,15 @@ function MessageDetail({ chatRoomId }) {
               </List>
             </div>
             <div />
-            {blockedStatus ? (
-              "you have been blocked. Can't send messages to this user."
+            {userStatus === "chat blocked" ? (
+              <Typography>
+                Due to violations of the company policy, you have been banned
+                from messaging any user.
+              </Typography>
+            ) : blockedStatus ? (
+              <Typography>
+                You have been blocked. Can't send messages to this user.
+              </Typography>
             ) : (
               <div style={styles.responseForm}>
                 <TextField
@@ -419,7 +399,7 @@ function MessageDetail({ chatRoomId }) {
                   color="primary"
                   onClick={handleSendResponse}
                   style={{
-                    color: "orange",
+                    color: "white", // Changed from orange to white for better contrast/readability
                     background: "#2D6072",
                     height: "55px",
                   }}

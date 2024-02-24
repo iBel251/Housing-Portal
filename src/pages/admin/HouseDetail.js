@@ -23,6 +23,7 @@ import useMainStore from "../../components/store/mainStore";
 import { AdminAuth } from "../../context/AdminContext";
 import { HashLoader } from "react-spinners";
 import EditHouse from "./EditHouse";
+import UserDetail from "./UserDetail";
 
 const styles = {
   paper: {
@@ -59,6 +60,7 @@ const HouseDetail = ({ houseId }) => {
   const [selectedRestriction, setSelectedRestriction] = useState("");
   const [house, setHouse] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [openUserDetailDialoge, setOpenUserDetailDialoge] = useState(false);
 
   useEffect(() => {
     const house = allHouses.find((h) => h.id === houseId);
@@ -177,13 +179,6 @@ const HouseDetail = ({ houseId }) => {
             <span>Restrictions: </span>
             {house.status || "Active"}
           </Typography>
-          <Button
-            startIcon={<ContactMailIcon sx={{ color: "white" }} />}
-            variant="contained"
-            sx={styles.button}
-          >
-            Contact Owner
-          </Button>
 
           <Button
             startIcon={<EditIcon sx={{ color: "white" }} />}
@@ -198,43 +193,45 @@ const HouseDetail = ({ houseId }) => {
             startIcon={<HouseOwnerIcon sx={{ color: "white" }} />}
             variant="contained"
             sx={styles.button}
+            onClick={() => setOpenUserDetailDialoge(true)}
           >
             Owner Detail
           </Button>
-          <FormControl sx={styles.formControl}>
-            <InputLabel id="restriction-select-label">Restriction</InputLabel>
-            <Select
-              labelId="restriction-select-label"
-              id="restriction-select"
-              value={selectedRestriction}
-              label="Restriction"
-              onChange={handleRestrictionChange}
-              sx={{ minWidth: "200px" }}
+          <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+            <FormControl sx={styles.formControl}>
+              <InputLabel id="restriction-select-label">Restriction</InputLabel>
+              <Select
+                labelId="restriction-select-label"
+                id="restriction-select"
+                value={selectedRestriction}
+                label="Restriction"
+                onChange={handleRestrictionChange}
+                sx={{ minWidth: "200px" }}
+              >
+                <MenuItem value={"active"}>None</MenuItem>
+                <MenuItem value={"unlisted"}>Unlist</MenuItem>
+                <MenuItem value={"blocked"}>Block</MenuItem>
+                {/* Add more restriction types as needed */}
+              </Select>
+            </FormControl>
+            <Button
+              disabled={loading}
+              variant="contained"
+              onClick={applyRestriction}
+              sx={{
+                height: "40px",
+                width: "200px",
+                background: "#2D6072",
+                margin: "8px",
+              }}
             >
-              <MenuItem value={"active"}>None</MenuItem>
-              <MenuItem value={"chat blocked"}>Suspend from Chat</MenuItem>
-              <MenuItem value={"full blocked"}>Block User</MenuItem>
-              <MenuItem value={"post blocked"}>Post Ban</MenuItem>
-              {/* Add more restriction types as needed */}
-            </Select>
-          </FormControl>
-          <Button
-            disabled={loading}
-            variant="contained"
-            onClick={applyRestriction}
-            sx={{
-              height: "40px",
-              width: "200px",
-              background: "#2D6072",
-              margin: "8px",
-            }}
-          >
-            {loading ? (
-              <HashLoader size={20} color="orange" />
-            ) : (
-              "Apply Restriction"
-            )}
-          </Button>
+              {loading ? (
+                <HashLoader size={20} color="orange" />
+              ) : (
+                "Apply Restriction"
+              )}
+            </Button>
+          </Box>
         </Grid>
       </Grid>
       <EditHouse
@@ -242,6 +239,15 @@ const HouseDetail = ({ houseId }) => {
         onClose={handleClose}
         houseId={houseId}
       />
+      <Dialog
+        open={openUserDetailDialoge}
+        onClose={() => setOpenUserDetailDialoge(false)}
+      >
+        <DialogTitle>Owner</DialogTitle>
+        <DialogContent>
+          <UserDetail userId={house.userId} />
+        </DialogContent>
+      </Dialog>
     </Paper>
   );
 };

@@ -24,7 +24,6 @@ const StoreInitializer = () => {
   }, [user]);
 
   useEffect(() => {
-    console.log("refetch triggered");
     if (userId) {
       const fetchUserDataAndHouseData = async () => {
         try {
