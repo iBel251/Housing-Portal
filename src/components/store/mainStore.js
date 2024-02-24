@@ -21,6 +21,7 @@ const useMainStore = create(
       activeLink: "home",
       activePage: null,
       activeChatRoomId: null,
+      userStatus: null,
 
       setUserData: (data) => set({ userData: data }),
       setNotifications: (data) => set({ notifications: data }),
@@ -43,6 +44,7 @@ const useMainStore = create(
       setActiveLink: (link) => set({ activeLink: link }),
       setActivePage: (page) => set({ activePage: page }),
       setActiveChatRoomId: (id) => set({ activeChatRoomId: id }),
+      setUserStatus: (status) => set({ userStatus: status }),
 
       // function to update user status
       updateUserStatus: (userId, newStatus) =>

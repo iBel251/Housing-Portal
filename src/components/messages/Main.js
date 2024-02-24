@@ -56,10 +56,6 @@ const Main = ({ isLoading, userId }) => {
     return lastMessageB - lastMessageA;
   });
 
-  if (newMessages) {
-    console.log("new messages : ", newMessages);
-  }
-
   if (isLoading) {
     return (
       <Container style={styles.root}>

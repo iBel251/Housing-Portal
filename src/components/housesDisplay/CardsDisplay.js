@@ -3,6 +3,9 @@ import { Grid, Pagination, Typography } from "@mui/material";
 import Card from "./Card";
 
 const CardsDisplay = ({ onHouseClick, allHouses }) => {
+  allHouses = allHouses.filter(
+    (house) => house.status !== "unlisted" && house.status !== "blocked"
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
   const pagesCount = Math.ceil(allHouses.length / itemsPerPage);

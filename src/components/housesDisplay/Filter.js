@@ -21,9 +21,7 @@ const Filter = ({ setFilteredHouses }) => {
 
   // Using useEffect to handle data upon each change
   useEffect(() => {
-    console.log({ subcity, rooms, price });
     const filteredHouses = filterHouses({ subcity, rooms, price });
-    console.log("filtered houses", filteredHouses);
     setFilteredHouses(filteredHouses);
   }, [subcity, rooms, price]);
   return (

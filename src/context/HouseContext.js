@@ -37,19 +37,21 @@ const HouseContext = createContext();
 export const HouseContextProvider = ({ children }) => {
   const { user } = UserAuth();
   const getHouseDetailsById = async (houseId) => {
-    try {
-      const houseDocRef = doc(db, "houses", houseId);
-      const houseDocSnapshot = await getDoc(houseDocRef);
+    if (houseId) {
+      try {
+        const houseDocRef = doc(db, "houses", houseId);
+        const houseDocSnapshot = await getDoc(houseDocRef);
 
-      if (houseDocSnapshot.exists()) {
-        return houseDocSnapshot.data();
-      } else {
-        console.log("House details not found");
+        if (houseDocSnapshot.exists()) {
+          return houseDocSnapshot.data();
+        } else {
+          console.log("House details not found");
+          return null;
+        }
+      } catch (error) {
+        console.error("Error getting house details:", error);
         return null;
       }
-    } catch (error) {
-      console.error("Error getting house details:", error);
-      return null;
     }
   };
 
@@ -69,6 +71,7 @@ export const HouseContextProvider = ({ children }) => {
         pic1,
         pic2,
         pic3,
+        phone,
       } = houseData;
 
       // Convert rooms and price to numbers
@@ -114,6 +117,7 @@ export const HouseContextProvider = ({ children }) => {
         userId: userId,
         timestamp,
         owner: fullName,
+        phone,
         // Add roommateData to the document if it's a roommate-type house
         ...(type === "roommate/shared" && { roommateData }),
       });

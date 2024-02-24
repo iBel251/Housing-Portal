@@ -109,9 +109,6 @@ const UserFeedback = ({ houseId }) => {
     // Fetch house details on component mount
     fetchHouseDetails();
   }, [houseId, getHouseDetailsById]);
-  useEffect(() => {
-    console.log("house :", houseDetails);
-  }, [houseDetails]);
 
   const handleSubmit = async () => {
     if (!user) {
@@ -127,7 +124,6 @@ const UserFeedback = ({ houseId }) => {
     // Call the submitFeedback function here
     try {
       await addOrUpdateFeedbackForHouse(houseId, rating, comment);
-      console.log("Feedback submitted successfully.");
       // Reset form
       setRating(0);
       setComment("");

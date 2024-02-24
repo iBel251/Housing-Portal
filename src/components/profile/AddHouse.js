@@ -44,7 +44,7 @@ const AddHouse = () => {
   const { registerHouse } = HouseAuth();
   const { user } = UserAuth();
   const storedUserData = useMainStore((state) => state.userData);
-  const { activeLink, setActiveLink } = useMainStore();
+  const { activeLink, setActiveLink, userStatus } = useMainStore();
   const [formData, setFormData] = useState({
     type: "",
     peopleNeeded: 0,
@@ -59,6 +59,7 @@ const AddHouse = () => {
     pic1: null,
     pic2: null,
     pic3: null,
+    phone: 0,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [unsavedChanges, setUnsavedChanges] = useState(false);
@@ -76,17 +77,10 @@ const AddHouse = () => {
   ];
   const types = ["Rental", "Exchange", "Sale", "Roommate/Shared"];
   const validateForm = () => {
-    const { subcity, bathroom, rooms, price, detail, area, pic1 } = formData;
+    const { subcity, bathroom, rooms, price, detail, area, pic1, phone } =
+      formData;
 
-    if (
-      !subcity ||
-      !bathroom ||
-      !rooms ||
-      !price ||
-      !detail ||
-      !area ||
-      !pic1
-    ) {
+    if (!subcity || !phone || !rooms || !price || !detail || !area || !pic1) {
       return false;
     }
 
@@ -115,6 +109,7 @@ const AddHouse = () => {
       alert("Please fill all the required fields and atleast 1 image.");
       return;
     }
+    setIsLoading(true);
     const fullName = storedUserData.firstName + " " + storedUserData.lastName;
     console.log(formData);
     try {
@@ -125,6 +120,7 @@ const AddHouse = () => {
     } catch (error) {
       console.error("Error registering a house:", error);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -145,23 +141,52 @@ const AddHouse = () => {
   }, [unsavedChanges]);
 
   return (
-    <Box style={styles.modalContainer}>
-      <Typography variant="h5">
-        Fill in the details to register your house for listing.
-      </Typography>
-      <NewHouseForm
-        formData={formData}
-        handleInputChange={handleInputChange}
-        handleImageChange={handleImageChange}
-      />
-      <Button
-        variant="contained"
-        disabled={isLoading}
-        onClick={handleSubmit}
-        sx={{ backgroundColor: "#2D6072" }}
-      >
-        {isLoading ? <CircularProgress size={24} color="inherit" /> : "Submit"}
-      </Button>
+    <Box>
+      {userStatus === "post blocked" ? (
+        <>
+          <Typography variant="h5">
+            You have been banned from posting a house.
+          </Typography>
+          <Typography variant="body2">
+            Due to violations of our safty policy restrictions have been passed
+            on your abiity to post new houses.
+            <br />
+            If similar violations occur again we will be forced to terminate
+            this account.
+            <br />
+            If you think this is a mistake please contact{" "}
+            <a
+              href="mailto:support@example.com"
+              style={{ textDecoration: "none" }}
+            >
+              support@example.com
+            </a>
+          </Typography>
+        </>
+      ) : (
+        <Box style={styles.modalContainer}>
+          <Typography variant="h5">
+            Fill in the details to register your house for listing.
+          </Typography>
+          <NewHouseForm
+            formData={formData}
+            handleInputChange={handleInputChange}
+            handleImageChange={handleImageChange}
+          />
+          <Button
+            variant="contained"
+            disabled={isLoading}
+            onClick={handleSubmit}
+            sx={{ backgroundColor: "#2D6072" }}
+          >
+            {isLoading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Submit"
+            )}
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 };

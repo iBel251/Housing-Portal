@@ -7,6 +7,7 @@ import {
   CircleLoader,
 } from "react-spinners";
 import { UserAuth } from "../context/AuthContext";
+import useMainStore from "../components/store/mainStore";
 
 const styles = {
   spinnerContainer: {
@@ -32,6 +33,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user } = UserAuth();
   const [isLoading, setIsLoading] = useState(true);
   const adminEmails = ["admin1@gmail.com", "admin2@gmail.com"];
+  const { userStatus } = useMainStore();
 
   useEffect(() => {
     if (user) {
@@ -55,7 +57,9 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
   if (adminOnly && !adminEmails.includes(user.email)) {
     return <Navigate to="/" />;
   }
-
+  if (userStatus === "full blocked") {
+    return <Navigate to="/user_blocked" />;
+  }
   return children;
 };
 

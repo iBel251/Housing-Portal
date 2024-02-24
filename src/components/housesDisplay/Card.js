@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card as MuiCard,
   CardMedia,
@@ -19,7 +19,21 @@ const styles = {
   card: {
     boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
     cursor: "pointer",
-    position: "relative", // Make sure the card has relative positioning
+    position: "relative",
+    borderTopLeftRadius: "10px",
+  },
+  type: {
+    position: "absolute",
+    background: "#00000080",
+    top: "0px",
+    left: "0px",
+    color: "white",
+    padding: "5px",
+    zIndex: 1,
+    fontSize: "10px",
+    fontWeight: "bold",
+    borderTopLeftRadius: "10px",
+    borderBottomRightRadius: "10px",
   },
   media: {
     height: 140,
@@ -43,6 +57,21 @@ const styles = {
 const Card = ({ house }) => {
   const toggleFavorites = useToggleFavorites();
   const storedUserData = useMainStore((state) => state.userData);
+  const [houseType, setHouseType] = useState();
+
+  useEffect(() => {
+    if (house.type === "roommate/shared") {
+      setHouseType("Roommate");
+    } else if (house.type === "rental") {
+      setHouseType("For rent");
+    } else if (house.type === "exchange") {
+      setHouseType("For exchange");
+    } else if (house.type === "sale") {
+      setHouseType("For sale");
+    } else {
+      setHouseType(house.type);
+    }
+  }, []);
 
   const handleToggleFavorite = (e) => {
     e.stopPropagation(); // Prevents the event from bubbling up
@@ -51,8 +80,7 @@ const Card = ({ house }) => {
 
   return (
     <Box style={{ position: "relative" }}>
-      {" "}
-      {/* Ensure Box has relative positioning */}
+      <Typography sx={styles.type}>{houseType}</Typography>
       <Link to={`/houses/${house.id}`} style={{ textDecoration: "none" }}>
         <MuiCard style={styles.card}>
           <CardMedia
@@ -68,20 +96,29 @@ const Card = ({ house }) => {
                   <span style={styles.infoLabel}>Subcity:</span>
                   <span style={styles.infoValue}>{house.subcity}</span>
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  <span style={styles.infoLabel}>Rooms:</span>
-                  <span style={styles.infoValue}>{house.rooms}</span>
-                </Typography>
+                {house.type === "sale" ? (
+                  <Typography variant="body2" color="text.secondary">
+                    <span style={styles.infoLabel}>Size:</span>
+                    <span style={styles.infoValue}>{house.areaSize} sqm</span>
+                  </Typography>
+                ) : (
+                  <Typography variant="body2" color="text.secondary">
+                    <span style={styles.infoLabel}>Rooms:</span>
+                    <span style={styles.infoValue}>{house.rooms}</span>
+                  </Typography>
+                )}
               </Grid>
               <Grid item xs={6}>
                 <Typography variant="body2" color="text.secondary">
                   <span style={styles.infoLabel}>Price:</span>
                   <span style={styles.infoValue}>{house.price} Birr</span>
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  <span style={styles.infoLabel}>Bathrooms:</span>
-                  <span style={styles.infoValue}>{house.bathroom}</span>
-                </Typography>
+                {house.type !== "sale" ? (
+                  <Typography variant="body2" color="text.secondary">
+                    <span style={styles.infoLabel}>Bathrooms:</span>
+                    <span style={styles.infoValue}>{house.bathroom}</span>
+                  </Typography>
+                ) : null}
               </Grid>
             </Grid>
           </CardContent>

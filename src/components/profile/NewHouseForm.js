@@ -234,6 +234,13 @@ const NewHouseForm = ({ formData, handleInputChange, handleImageChange }) => {
         onChange={(event) => handleInputChange("price", event.target.value)}
         style={styles.formControl}
       />
+      <TextField
+        label="Phone Number"
+        type="phone"
+        value={formData.phone}
+        onChange={(event) => handleInputChange("phone", event.target.value)}
+        style={styles.formControl}
+      />
       <Grid container spacing={2}>
         {[1, 2, 3].map((index) => (
           <Grid item key={index}>
