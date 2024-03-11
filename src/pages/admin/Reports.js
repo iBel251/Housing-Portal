@@ -37,7 +37,6 @@ const Reports = () => {
   const { adminData } = useMainStore();
   const [selectedReport, setSelectedReport] = useState("house");
 
-  // Assuming adminData[1] contains house reports based on your sample data
   const blockedUsers = adminData && adminData.length > 0 ? adminData[0] : [];
   const houseReports = adminData && adminData.length > 1 ? adminData[1] : [];
   const userReports = adminData && adminData.length > 2 ? adminData[2] : [];
