@@ -6,12 +6,9 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Avatar,
-  Tooltip,
   Box,
-  IconButton,
+  Tooltip,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import UserDetail from "./UserDetail";
 
 const styles = {
@@ -28,7 +25,7 @@ const styles = {
     whiteSpace: "nowrap",
   },
   activeCell: {
-    backgroundColor: "lightyellow", // change to your preferred color
+    backgroundColor: "lightyellow",
   },
 };
 
@@ -42,6 +39,11 @@ const UsersTable = ({ users }) => {
     setOpenUserDetails(true);
     setActiveCell(id);
   };
+
+  if (!users || !Array.isArray(users)) {
+    // Display a loading or placeholder message if users data is not yet available
+    return <Box>Loading users data, please wait...</Box>;
+  }
 
   return (
     <Box
@@ -67,8 +69,8 @@ const UsersTable = ({ users }) => {
               <TableRow
                 key={user.id}
                 sx={user.id === activeCell ? styles.activeCell : {}}
-                onClick={() => handleEditClick(user, user.id)} // Add onClick event here
-                style={{ cursor: "pointer" }} // Change the cursor to pointer when hovering over a row
+                onClick={() => handleEditClick(user, user.id)}
+                style={{ cursor: "pointer" }}
               >
                 <TableCell>
                   <Tooltip title={user.id} arrow>
