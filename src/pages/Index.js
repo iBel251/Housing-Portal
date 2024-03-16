@@ -89,7 +89,7 @@ const Index = () => {
 
             <Button
               variant="contained"
-              onClick={() => navigate("/houses")}
+              onClick={() => navigate("/login")}
               startIcon={<SearchIcon />}
               style={{
                 height: "100%",

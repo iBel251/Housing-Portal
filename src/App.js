@@ -31,6 +31,7 @@ import "./styles/customstyles.css";
 import AdminContextProvider from "./context/AdminContext";
 import PasswordResetPage from "./pages/PasswordResetPage";
 import BlockedUserPage from "./pages/BlockedUserPage";
+import PublicRoute from "./pages/PublicRoute";
 
 const tele = window.Telegram.WebApp;
 const NavContent = () => {
@@ -113,8 +114,22 @@ function App() {
                           </ProtectedRoute>
                         }
                       />
-                      <Route path="signup" element={<Signup />} />
-                      <Route path="login" element={<Login />} />
+                      <Route
+                        path="signup"
+                        element={
+                          <PublicRoute>
+                            <Signup />
+                          </PublicRoute>
+                        }
+                      />
+                      <Route
+                        path="login"
+                        element={
+                          <PublicRoute>
+                            <Login />
+                          </PublicRoute>
+                        }
+                      />
                       <Route
                         path="admin"
                         element={

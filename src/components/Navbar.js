@@ -64,7 +64,7 @@ function ResponsiveAppBar() {
         ];
       } else {
         setIsLoggedIn(false);
-        pages = ["Houses", "Help"];
+        pages = [];
       }
     };
     checkLoginStatus();
